@@ -1,0 +1,8 @@
+.idea/
+
+*.pyc
+
+node_modules/
+
+server/static/bundles/local/
+webpack-stats-local.json

@@ -1,19 +1,17 @@
-var path = require("path")
-var webpack = require('webpack')
-var BundleTracker = require('webpack-bundle-tracker')
+const path = require("path");
+const webpack = require('webpack');
 
 module.exports = {
   context: __dirname,
 
   entry: {
     // Add as many entry points as you have container-react-components here
-    SampleApp: './reactjs/SampleApp',
-    SampleApp2: './reactjs/SampleApp2',
+    PymoteWebApp: './src/client/index',
     vendors: ['react'],
   },
 
   output: {
-      path: path.resolve('./djreact/static/bundles/local/'),
+      path: path.resolve('./server/static/bundles/local/'),
       filename: "[name]-[hash].js"
   },
 
@@ -32,4 +30,4 @@ module.exports = {
     modulesDirectories: ['node_modules', 'bower_components'],
     extensions: ['', '.js', '.jsx']
   },
-}
+};
