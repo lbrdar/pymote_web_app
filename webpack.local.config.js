@@ -9,12 +9,16 @@ config.devtool = "#eval-source-map";
 
 config.ip = ip;
 
+const defaultEntryParts = [
+  'webpack-dev-server/client?http://' + ip + ':3000',
+  'webpack/hot/only-dev-server'
+];
+
 // Use webpack dev server
 config.entry = {
-  PymoteWebApp: [
-    'webpack-dev-server/client?http://' + ip + ':3000',
-    'webpack/hot/only-dev-server',
-    './client/index',
+  algorithm: [
+    ...defaultEntryParts,
+    './client/pages/algorithm/index'
   ],
 };
 

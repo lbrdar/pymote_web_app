@@ -6,20 +6,21 @@ module.exports = {
 
   entry: {
     // Add as many entry points as you have container-react-components here
-    PymoteWebApp: './src/client/index',
+    algorithm: './client/pages/algorithm/index',
+    results: './client/pages/results/index',
     vendors: ['react'],
   },
 
   output: {
       path: path.resolve('./server/static/bundles/local/'),
-      filename: "[name]-[hash].js"
+      filename: "[name].js"
   },
 
   externals: [
   ], // add all vendor libs
 
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js'),
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js', Infinity),
   ], // add all common plugins here
 
   module: {

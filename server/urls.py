@@ -17,9 +17,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.views import generic
+from views import Algorithm
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$',
-        generic.TemplateView.as_view(template_name='sample_app.html')),
+    url(r'^$', Algorithm.as_view(), name='algorithm'),
 ]

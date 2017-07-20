@@ -2,7 +2,10 @@
 {% load render_bundle from webpack_loader %}
 
 {% block main %}
-<div id="PymoteWebApp"></div>
+<div id="root"></div>
+<script>
+  window.props = {{props|safe}};
+</script>
 {% render_bundle 'vendors' %}
-{% render_bundle 'PymoteWebApp' %}
+{% render_bundle component %}
 {% endblock %}
