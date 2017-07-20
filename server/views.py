@@ -1,6 +1,5 @@
 from django.views.generic import View
 from django.shortcuts import render
-import json
 
 
 class Algorithm(View):
@@ -17,7 +16,7 @@ class Algorithm(View):
         context = {
             'title': self.title,
             'component': self.component,
-            'props': json.dumps(props),
+            'props': props,
         }
 
         return render(request, self.template, context)
