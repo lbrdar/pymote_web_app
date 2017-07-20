@@ -1,6 +1,6 @@
-from django.views.generic import View
+from django.views import View
 from django.shortcuts import render
-
+from pymote import *
 
 class Algorithm(View):
     title = 'Algorithm'
