@@ -6,3 +6,7 @@ node_modules/
 
 server/static/bundles/local/
 webpack-stats-local.json
+
+# pymote logs
+pymote.log
+simulation.log
