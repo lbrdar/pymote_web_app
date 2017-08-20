@@ -9,11 +9,15 @@ const styles = {
 
   },
   code: {
-    display: 'inline-block'
+    display: 'inline-block',
+    height: 600,
+    overflow: 'scroll',
+    marginRight: '20px'
   },
   canvas: {
     border: '1px solid black',
-    display: 'inline-block'
+    display: 'inline-block',
+    position: 'absolute'
   }
 };
 

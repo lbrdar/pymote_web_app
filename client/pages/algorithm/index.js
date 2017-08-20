@@ -1,49 +1,77 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
+import { Stage, Layer, Circle, Line } from 'react-konva';
 import styles from './style';
 
 const NODE_SIZE = 10;
 
 class AlgorithmPage extends React.Component {
 
-  componentDidMount() {
-    this.renderNetwork();
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      nodes: props.network.nodes,
+      edges: props.network.edges,
+      selectedNode: null
+    };
   }
 
-  renderNetwork = () => {
-    const { nodes, edges } = this.props.network;
-    const ctx = this.canvas.getContext('2d');
+  onNodeClick = e => this.setState({ selectedNode: e.target.attrs.id });
 
-    nodes.forEach((node) => {
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, NODE_SIZE, 0, 2 * Math.PI);
-      ctx.stroke();
-    });
+  onNodeDragStart = () => {
+    // TODO
+  };
 
-    edges.forEach((edge) => {
-      const n1 = edge[0];
-      const n2 = edge[1];
+  onNodeDragEnd = () => {
+    // TODO
+  };
 
-      ctx.moveTo(n1.x, n1.y);
-      ctx.lineTo(n2.x, n2.y);
-      ctx.stroke();
-    });
+  renderNode = (node, index) => (
+    <Circle
+      key={node.id}
+      id={node.id}
+      index={index}
+      x={node.x}
+      y={node.y}
+      radius={NODE_SIZE}
+      fill="red"
+      shadowBlur={10}
+      draggable="true"
+      onClick={this.onNodeClick}
+      onDragStart={this.onNodeDragStart}
+      onDragEnd={this.onNodeDragEnd}
+    />
+  );
+
+  renderEdge = edge => (
+    <Line
+      key={`${edge[0].id}-${edge[1].id}`}
+      points={[edge[0].x, edge[0].y, edge[1].x, edge[1].y]}
+      stroke="black"
+    />
+  );
+
+  renderNetworkCanvas = () => {
+    const { nodes, edges } = this.state;
+    return (
+      <Stage width="600" height="600" style={styles.canvas}>
+        <Layer>
+          { edges.map(this.renderEdge) }
+          { nodes.map(this.renderNode) }
+        </Layer>
+      </Stage>
+    );
   };
 
   render() {
     const { algorithm } = this.props;
-
     return (
       <div style={styles.page}>
         <h2 style={styles.title}>Set up your network and pick an algorithm</h2>
         <div style={styles.content}>
           <pre style={styles.code}>{algorithm}</pre>
-          <canvas
-            ref={ref => (this.canvas = ref)}
-            style={styles.canvas}
-            width="600"
-            height="600"
-          />
+          { this.renderNetworkCanvas() }
         </div>
       </div>
     );
