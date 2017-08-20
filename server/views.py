@@ -14,6 +14,7 @@ class Algorithm(View):
         nodes = []
         for n in network.nodes():
             node = {
+                'id': n.id,
                 'x': network.pos[n][0],
                 'y': network.pos[n][1],
                 'theta': network.ori[n] * 180. / pi
