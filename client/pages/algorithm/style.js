@@ -1,23 +1,26 @@
 const styles = {
-  page: {
-    padding: '10px'
-  },
-  title: {
-
-  },
   content: {
+    padding: '10px',
+    display: 'flex'
+  },
 
+  algorithmsContainer: {
+    width: '50%',
+    maxHeight: 600,
+    overflowY: 'auto'
+  },
+  algorithmLabel: {
+    fontWeight: 'bold',
+    fontSize: '24px'
   },
   code: {
-    display: 'inline-block',
-    height: 600,
-    overflow: 'scroll',
-    marginRight: '20px'
+  },
+
+  networkContainer: {
+    margin: '0 auto'
   },
   canvas: {
-    border: '1px solid black',
-    display: 'inline-block',
-    position: 'absolute'
+    border: '1px solid black'
   }
 };
 

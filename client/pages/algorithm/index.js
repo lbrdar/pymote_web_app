@@ -1,85 +1,40 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { Stage, Layer, Circle, Line } from 'react-konva';
+import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Algorithm from './Algorithm';
+import Network from './Network';
 import styles from './style';
 
-const NODE_SIZE = 10;
 
-class AlgorithmPage extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      nodes: props.network.nodes,
-      edges: props.network.edges,
-      selectedNode: null
-    };
-  }
-
-  onNodeClick = e => this.setState({ selectedNode: e.target.attrs.id });
-
-  onNodeDragStart = () => {
-    // TODO
-  };
-
-  onNodeDragEnd = () => {
-    // TODO
-  };
-
-  renderNode = (node, index) => (
-    <Circle
-      key={node.id}
-      id={node.id}
-      index={index}
-      x={node.x}
-      y={node.y}
-      radius={NODE_SIZE}
-      fill="red"
-      shadowBlur={10}
-      draggable="true"
-      onClick={this.onNodeClick}
-      onDragStart={this.onNodeDragStart}
-      onDragEnd={this.onNodeDragEnd}
-    />
-  );
-
-  renderEdge = edge => (
-    <Line
-      key={`${edge[0].id}-${edge[1].id}`}
-      points={[edge[0].x, edge[0].y, edge[1].x, edge[1].y]}
-      stroke="black"
-    />
-  );
-
-  renderNetworkCanvas = () => {
-    const { nodes, edges } = this.state;
-    return (
-      <Stage width="600" height="600" style={styles.canvas}>
-        <Layer>
-          { edges.map(this.renderEdge) }
-          { nodes.map(this.renderNode) }
-        </Layer>
-      </Stage>
-    );
-  };
-
-  render() {
-    const { algorithm } = this.props;
-    return (
-      <div style={styles.page}>
-        <h2 style={styles.title}>Set up your network and pick an algorithm</h2>
+function AlgorithmPage(props) {
+  return (
+    <MuiThemeProvider>
+      <div>
+        <AppBar
+          title={<span style={styles.title}>Set up your network and pick an algorithm</span>}
+          iconElementRight={<FlatButton label="Run simulation" />}
+          showMenuIconButton={false}
+        />
         <div style={styles.content}>
-          <pre style={styles.code}>{algorithm}</pre>
-          { this.renderNetworkCanvas() }
+          <Algorithm algorithm={props.algorithm} algorithm2={props.algorithm2} />
+          <Network network={props.network} />
         </div>
       </div>
-    );
-  }
+    </MuiThemeProvider>
+  );
 }
 
 AlgorithmPage.propTypes = {
-  algorithm: PropTypes.string.isRequired,
+  algorithm: PropTypes.shape({
+    label: PropTypes.string,
+    code: PropTypes.string
+  }).isRequired,
+  algorithm2: PropTypes.shape({
+    label: PropTypes.string,
+    code: PropTypes.string
+  }).isRequired,
   network: PropTypes.shape({
     nodes: PropTypes.array,
     edges: PropTypes.array
