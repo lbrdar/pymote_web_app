@@ -21,6 +21,13 @@ const styles = {
   },
   canvas: {
     border: '1px solid black'
+  },
+  errorMsg: {
+    flex: 1,
+    color: 'red',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    textAlign: 'center'
   }
 };
 

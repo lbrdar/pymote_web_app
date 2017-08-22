@@ -1,9 +1,12 @@
 import React, { PropTypes } from 'react';
-import { Stage, Layer, Circle, Line } from 'react-konva';
+import { Stage, Layer, Circle, Line, Rect } from 'react-konva';
 import Paper from 'material-ui/Paper';
+import NodeDetails from './NodeDetails';
 import styles from './style';
 
 const NODE_SIZE = 10;
+const NETWORK_WIDTH = 600;
+const NETWORK_HEIGHT = 600;
 
 class Network extends React.Component {
 
@@ -13,11 +16,19 @@ class Network extends React.Component {
     this.state = {
       nodes: props.network.nodes,
       edges: props.network.edges,
-      selectedNode: null
+      selectedNodeId: null,
+      open: false
     };
   }
 
-  onNodeClick = e => this.setState({ selectedNode: e.target.attrs.id });
+  onStageClick = (e) => {
+    this.createNode(e.evt.offsetX, e.evt.offsetY);
+  };
+
+  onNodeClick = (e) => {
+    this.setState({ selectedNodeId: e.target.attrs.id });
+    this.openModal();
+  };
 
   onNodeDragStart = () => {
     // TODO
@@ -28,6 +39,27 @@ class Network extends React.Component {
 
   };
 
+  openModal = () => this.setState({ open: true });
+  closeModal = () => this.setState({ open: false });
+
+  createNode = (x, y) => {
+    const nodes = this.state.nodes;
+    nodes.push({
+      id: Date.now(), // dummy temporary id
+      x,
+      y,
+      theta: 0,
+      memory: {}
+    });
+
+    this.setState({ nodes });
+  };
+  updateNode = (oldNode, newNode) => {
+    const nodes = this.state.nodes;
+    nodes.splice(nodes.indexOf(oldNode), 1, newNode);
+    this.setState({ nodes });
+  };
+
   renderNode = (node, index) => (
     <Circle
       key={node.id}
@@ -36,7 +68,7 @@ class Network extends React.Component {
       x={node.x}
       y={node.y}
       radius={NODE_SIZE}
-      fill="red"
+      fill={(node.id === this.state.selectedNodeId) ? 'red' : 'green'}
       shadowBlur={10}
       draggable="true"
       onClick={this.onNodeClick}
@@ -54,15 +86,26 @@ class Network extends React.Component {
   );
 
   render() {
-    const { nodes, edges } = this.state;
+    const { nodes, edges, selectedNodeId, open } = this.state;
+    const selectedNode = selectedNodeId && nodes.filter(node => node.id === selectedNodeId)[0];
+
     return (
       <Paper zDepth={2} style={styles.networkContainer}>
-        <Stage width="600" height="600" style={styles.canvas}>
+        <Stage width={NETWORK_WIDTH} height={NETWORK_HEIGHT} style={styles.canvas}>
           <Layer>
+            <Rect x={0} y={0} width={NETWORK_WIDTH} height={NETWORK_HEIGHT} onClick={this.onStageClick} />
             { edges.map(this.renderEdge) }
             { nodes.map(this.renderNode) }
           </Layer>
         </Stage>
+        {open &&
+          <NodeDetails
+            node={selectedNode}
+            networkLimits={{ x: NETWORK_WIDTH, y: NETWORK_HEIGHT }}
+            closeModal={this.closeModal}
+            updateNode={this.updateNode}
+          />
+        }
       </Paper>
     );
   }
