@@ -16,19 +16,40 @@ class Network extends React.Component {
     this.state = {
       nodes: props.network.nodes,
       edges: props.network.edges,
-      selectedNodeId: null,
+      selectedNode: null,
       open: false
     };
   }
 
   onStageClick = (e) => {
+    this.setState({ selectedNode: null });
     this.createNode(e.evt.offsetX, e.evt.offsetY);
   };
 
   onNodeClick = (e) => {
-    this.setState({ selectedNodeId: e.target.attrs.id });
-    this.openModal();
+    const { edges, nodes, selectedNode } = this.state;
+    const clickedNode = nodes.filter(node => (node.id === e.target.attrs.id))[0];
+    if (selectedNode === null) {
+      this.setState({ selectedNode: clickedNode });
+    } else if (clickedNode.id !== selectedNode.id) {
+      edges.push([
+        {
+          id: selectedNode.id,
+          x: selectedNode.x,
+          y: selectedNode.y
+        },
+        {
+          id: clickedNode.id,
+          x: clickedNode.x,
+          y: clickedNode.y
+        }
+      ]);
+
+      this.setState({ edges, selectedNode: null });
+    }
   };
+
+  onNodeDoubleClick = () => this.openModal();
 
   onNodeDragStart = () => {
     // TODO
@@ -40,7 +61,7 @@ class Network extends React.Component {
   };
 
   openModal = () => this.setState({ open: true });
-  closeModal = () => this.setState({ open: false });
+  closeModal = () => this.setState({ open: false, selectedNode: null });
 
   createNode = (x, y) => {
     const nodes = this.state.nodes;
@@ -68,10 +89,11 @@ class Network extends React.Component {
       x={node.x}
       y={node.y}
       radius={NODE_SIZE}
-      fill={(node.id === this.state.selectedNodeId) ? 'red' : 'green'}
+      fill={(this.state.selectedNode && this.state.selectedNode.id === node.id) ? 'red' : 'green'}
       shadowBlur={10}
       draggable="true"
       onClick={this.onNodeClick}
+      onDblclick={this.onNodeDoubleClick}
       onDragStart={this.onNodeDragStart}
       onDragEnd={this.onNodeDragEnd}
     />
@@ -86,8 +108,7 @@ class Network extends React.Component {
   );
 
   render() {
-    const { nodes, edges, selectedNodeId, open } = this.state;
-    const selectedNode = selectedNodeId && nodes.filter(node => node.id === selectedNodeId)[0];
+    const { nodes, edges, selectedNode, open } = this.state;
 
     return (
       <Paper zDepth={2} style={styles.networkContainer}>
