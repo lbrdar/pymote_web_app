@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { PropTypes } from 'react';
 import { Stage, Layer, Circle, Line, Rect } from 'react-konva';
 import Paper from 'material-ui/Paper';
@@ -21,14 +22,14 @@ class Network extends React.Component {
     };
   }
 
-  onStageClick = (e) => {
+  onStageClick = ({ evt }) => {
     this.setState({ selectedNode: null });
-    this.createNode(e.evt.offsetX, e.evt.offsetY);
+    this.createNode(evt.offsetX, evt.offsetY);
   };
 
-  onNodeClick = (e) => {
+  onNodeClick = ({ target }) => {
     const { edges, nodes, selectedNode } = this.state;
-    const clickedNode = nodes.filter(node => (node.id === e.target.attrs.id))[0];
+    const clickedNode = nodes.filter(node => (node.id === target.attrs.id))[0];
     if (selectedNode === null) {
       this.setState({ selectedNode: clickedNode });
     } else if (clickedNode.id !== selectedNode.id) {
@@ -51,13 +52,37 @@ class Network extends React.Component {
 
   onNodeDoubleClick = () => this.openModal();
 
-  onNodeDragStart = () => {
-    // TODO
-  };
+  onNodeDragMove = ({ evt, target }) => {
+    const { offsetX: x, offsetY: y } = evt;
+    const { attrs: { id: draggedNodeId } } = target;
 
-  onNodeDragEnd = () => {
-    // TODO
+    const edges = this.state.edges.map((edge) => {
+      if (edge[0].id === draggedNodeId) {
+        edge[0].x = x;
+        edge[0].y = y;
+      } else if (edge[1].id === draggedNodeId) {
+        edge[1].x = x;
+        edge[1].y = y;
+      }
 
+      return edge;
+    });
+
+    const nodes = this.state.nodes.map((node) => {
+      if (node.id === draggedNodeId) {
+        node.x = x;
+        node.y = y;
+      }
+      return node;
+    });
+
+    const { selectedNode } = this.state;
+    if (selectedNode.id === draggedNodeId) {
+      selectedNode.x = x;
+      selectedNode.y = y;
+    }
+
+    this.setState({ edges, nodes, selectedNode });
   };
 
   openModal = () => this.setState({ open: true });
@@ -94,8 +119,7 @@ class Network extends React.Component {
       draggable="true"
       onClick={this.onNodeClick}
       onDblclick={this.onNodeDoubleClick}
-      onDragStart={this.onNodeDragStart}
-      onDragEnd={this.onNodeDragEnd}
+      onDragMove={this.onNodeDragMove}
     />
   );
 
