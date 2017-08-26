@@ -77,7 +77,7 @@ class Network extends React.Component {
     });
 
     const { selectedNode } = this.state;
-    if (selectedNode.id === draggedNodeId) {
+    if (selectedNode && selectedNode.id === draggedNodeId) {
       selectedNode.x = x;
       selectedNode.y = y;
     }
