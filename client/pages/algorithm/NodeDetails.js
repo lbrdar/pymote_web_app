@@ -3,6 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
 import styles from './style';
 
 
@@ -72,6 +73,21 @@ class NodeDetails extends React.Component {
     this.props.closeModal();
   };
 
+  remove = () => this.props.deleteNode(this.props.node);
+
+  renderTitle = () => (
+    <div style={styles.modalTitleContainer}>
+      <p style={styles.modalTitle}>Node details</p>
+      <RaisedButton
+        label="Delete"
+        icon={<DeleteForever />}
+        secondary={true}
+        style={styles.modalDeleteButton}
+        onClick={this.remove}
+      />
+    </div>
+  );
+
   render() {
     const { x, y, theta, memory, error } = this.state;
     const actions = [
@@ -90,7 +106,7 @@ class NodeDetails extends React.Component {
 
     return (
       <Dialog
-        title="Node details"
+        title={this.renderTitle()}
         actions={actions}
         modal={false}
         autoScrollBodyContent
@@ -149,6 +165,7 @@ NodeDetails.propTypes = {
   }).isRequired,
   closeModal: PropTypes.func.isRequired,
   updateNode: PropTypes.func.isRequired,
+  deleteNode: PropTypes.func.isRequired,
 };
 
 export default NodeDetails;

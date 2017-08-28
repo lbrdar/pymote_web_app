@@ -2,6 +2,7 @@
 import React, { PropTypes } from 'react';
 import { Stage, Layer, Circle, Line, Rect } from 'react-konva';
 import Paper from 'material-ui/Paper';
+import EdgeDetails from './EdgeDetails';
 import NodeDetails from './NodeDetails';
 import styles from './style';
 
@@ -18,7 +19,9 @@ class Network extends React.Component {
       nodes: props.network.nodes,
       edges: props.network.edges,
       selectedNode: null,
-      open: false
+      selectedEdge: null,
+      showNodeDetails: false,
+      showEdgeDetails: false
     };
   }
 
@@ -26,6 +29,9 @@ class Network extends React.Component {
     this.setState({ selectedNode: null });
     this.createNode(evt.offsetX, evt.offsetY);
   };
+
+  onEdgeClick = ({ target }) => this.setState({ selectedEdge: this.state.edges[target.attrs.index] });
+  onEdgeDoubleClick = () => this.openModal('Edge');
 
   onNodeClick = ({ target }) => {
     const { edges, nodes, selectedNode } = this.state;
@@ -49,9 +55,7 @@ class Network extends React.Component {
       this.setState({ edges, selectedNode: null });
     }
   };
-
-  onNodeDoubleClick = () => this.openModal();
-
+  onNodeDoubleClick = () => this.openModal('Node');
   onNodeDragMove = ({ evt, target }) => {
     const { offsetX: x, offsetY: y } = evt;
     const { attrs: { id: draggedNodeId } } = target;
@@ -85,8 +89,8 @@ class Network extends React.Component {
     this.setState({ edges, nodes, selectedNode });
   };
 
-  openModal = () => this.setState({ open: true });
-  closeModal = () => this.setState({ open: false, selectedNode: null });
+  openModal = type => this.setState({ [`show${type}Details`]: true });
+  closeModal = () => this.setState({ showNodeDetails: false, showEdgeDetails: false, selectedNode: null, selectedEdge: null });
 
   createNode = (x, y) => {
     const nodes = this.state.nodes;
@@ -104,6 +108,21 @@ class Network extends React.Component {
     const nodes = this.state.nodes;
     nodes.splice(nodes.indexOf(oldNode), 1, newNode);
     this.setState({ nodes });
+  };
+  deleteNode = (node) => {
+    const { edges, nodes } = this.state;
+    nodes.splice(nodes.indexOf(node), 1);
+    // remove all edges connected to that node
+    const newEdges = edges.filter(edge => (edge[0].id !== node.id && edge[1].id !== node.id));
+    this.setState({ edges: newEdges, nodes });
+    this.closeModal();
+  };
+
+  deleteEdge = (edge) => {
+    const edges = this.state.edges;
+    edges.splice(edges.indexOf(edge), 1);
+    this.setState({ edges });
+    this.closeModal();
   };
 
   renderNode = (node, index) => (
@@ -123,16 +142,23 @@ class Network extends React.Component {
     />
   );
 
-  renderEdge = edge => (
-    <Line
-      key={`${edge[0].id}-${edge[1].id}`}
-      points={[edge[0].x, edge[0].y, edge[1].x, edge[1].y]}
-      stroke="black"
-    />
-  );
+  renderEdge = (edge, index) => {
+    const { selectedEdge } = this.state;
+    const isSelected = (selectedEdge && selectedEdge[0].id === edge[0].id && selectedEdge[1].id === edge[1].id);
+    return (
+      <Line
+        key={`${edge[0].id}-${edge[1].id}`}
+        index={index}
+        points={[edge[0].x, edge[0].y, edge[1].x, edge[1].y]}
+        stroke={isSelected ? 'red' : 'black'}
+        onClick={this.onEdgeClick}
+        onDblclick={this.onEdgeDoubleClick}
+      />
+    );
+  };
 
   render() {
-    const { nodes, edges, selectedNode, open } = this.state;
+    const { nodes, edges, selectedNode, selectedEdge, showNodeDetails, showEdgeDetails } = this.state;
 
     return (
       <Paper zDepth={2} style={styles.networkContainer}>
@@ -143,12 +169,20 @@ class Network extends React.Component {
             { nodes.map(this.renderNode) }
           </Layer>
         </Stage>
-        {open &&
+        {showNodeDetails &&
           <NodeDetails
             node={selectedNode}
             networkLimits={{ x: NETWORK_WIDTH, y: NETWORK_HEIGHT }}
             closeModal={this.closeModal}
             updateNode={this.updateNode}
+            deleteNode={this.deleteNode}
+          />
+        }
+        {showEdgeDetails &&
+          <EdgeDetails
+            edge={selectedEdge}
+            closeModal={this.closeModal}
+            deleteEdge={this.deleteEdge}
           />
         }
       </Paper>

@@ -1,0 +1,69 @@
+import React, { PropTypes } from 'react';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
+import styles from './style';
+
+
+class EdgeDetails extends React.Component {
+  remove = () => this.props.deleteEdge(this.props.edge);
+
+  renderTitle = () => (
+    <div style={styles.modalTitleContainer}>
+      <p style={styles.modalTitle}>Edge details</p>
+      <RaisedButton
+        label="Delete"
+        icon={<DeleteForever />}
+        secondary={true}
+        style={styles.modalDeleteButton}
+        onClick={this.remove}
+      />
+    </div>
+  );
+
+  render() {
+    const actions = [
+      <FlatButton
+        label="Close"
+        primary={true}
+        onClick={this.props.closeModal}
+      />
+    ];
+
+    return (
+      <Dialog
+        title={this.renderTitle()}
+        actions={actions}
+        modal={false}
+        autoScrollBodyContent
+        open
+        onRequestClose={this.props.closeModal}
+      >
+        <TextField
+          disabled
+          fullWidth
+          floatingLabelText="From"
+          value={this.props.edge[0].id}
+        />
+        <TextField
+          disabled
+          fullWidth
+          floatingLabelText="To"
+          value={this.props.edge[1].id}
+        />
+      </Dialog>
+    );
+  }
+}
+
+EdgeDetails.propTypes = {
+  edge: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number
+  })).isRequired,
+  closeModal: PropTypes.func.isRequired,
+  deleteEdge: PropTypes.func.isRequired,
+};
+
+export default EdgeDetails;
