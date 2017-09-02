@@ -1,4 +1,7 @@
 from numpy import pi
+from pymote import *
+from pymote.algorithms.broadcast import Flood
+from pymote.algorithms.readsensors import ReadSensors
 
 def get_nodes(network):
     nodes = []
@@ -29,3 +32,22 @@ def get_edges(network):
         }]
         edges.append(edge)
     return edges
+
+def get_network_dict(network):
+    return {
+        'nodes': get_nodes(network),
+        'edges': get_edges(network),
+    }
+
+def generate_network(nodes, algorithmName):
+    network = Network()
+    if algorithmName == 'Flood':
+        network.algorithms = ( (Flood, {'informationKey':'I'}), )
+    elif algorithmName == 'ReadSensors':
+        network.algorithms = ( (ReadSensors, {}), )
+
+    for node in nodes:
+        createdNode = network.add_node(pos=[node['x'], node['y']], ori=node['theta'])
+        createdNode.memory = node['memory']
+
+    return network
