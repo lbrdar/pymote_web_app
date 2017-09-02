@@ -5,17 +5,16 @@ class ResultsPage extends React.Component {
   render() {
     return (
       <div>
-        {this.props.title}
+        Results
       </div>
     );
   }
 }
 
 ResultsPage.propTypes = {
-  title: React.PropTypes.string.isRequired
 };
 
 ReactDOM.render(
   <ResultsPage {...window.props} />,
-  window.react_mount
+  document.getElementById('root')
 );

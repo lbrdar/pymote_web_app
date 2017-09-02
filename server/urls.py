@@ -17,9 +17,10 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.views import generic
-from views import Algorithm
+from views import Algorithm, Results
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', Algorithm.as_view(), name='algorithm'),
+    url(r'^results/', Results.as_view(), name='results'),
 ]

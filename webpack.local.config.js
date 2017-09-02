@@ -20,6 +20,10 @@ config.entry = {
     ...defaultEntryParts,
     './client/pages/algorithm/index'
   ],
+  results: [
+    ...defaultEntryParts,
+    './client/pages/results/index'
+  ],
 };
 
 // override django's STATIC_URL for webpack bundles
