@@ -1,57 +1,60 @@
 import React, { PropTypes } from 'react';
 import { Card, CardHeader, CardText } from 'material-ui/Card';
 import Paper from 'material-ui/Paper';
+import FlatButton from 'material-ui/FlatButton';
 import styles from './style';
 
 class Algorithm extends React.Component {
-  constructor(props) {
-    super(props);
+  renderTitle = (algorithm) => {
+    const isSelected = this.props.selected && (this.props.selected.label === algorithm.label);
+    return (
+      <div style={styles.algorithmLabelContainer}>
+        <p style={styles.algorithmLabel}>{algorithm.label}</p>
+        {!isSelected && <FlatButton label="Select" onClick={() => this.props.onSelect(algorithm)} />}
+      </div>
+    );
+  };
 
-    this.state = {
-      selected: null
-    };
-  }
+  renderAlgorithm = (algorithm, index) => {
+    const isSelected = this.props.selected && (this.props.selected.label === algorithm.label);
+    return (
+      <Card key={index}>
+        <CardHeader
+          title={this.renderTitle(algorithm)}
+          style={{ border: isSelected ? '4px solid red' : 'none' }}
+          textStyle={{ width: '100%' }}
+          showExpandableButton={true}
+        />
+        <CardText expandable={true}>
+          <pre style={styles.code}>{algorithm.code}</pre>
+        </CardText>
+      </Card>
+    );
+  };
 
   render() {
-    const { algorithm, algorithm2 } = this.props;
     return (
       <Paper zDepth={2} style={styles.algorithmsContainer}>
-        <Card>
-          <CardHeader
-            title={algorithm.label}
-            titleStyle={styles.algorithmLabel}
-            actAsExpander={true}
-            showExpandableButton={true}
-          />
-          <CardText expandable={true}>
-            <pre style={styles.code}>{algorithm.code}</pre>
-          </CardText>
-        </Card>
-        <Card>
-          <CardHeader
-            title={algorithm2.label}
-            titleStyle={styles.algorithmLabel}
-            actAsExpander={true}
-            showExpandableButton={true}
-          />
-          <CardText expandable={true}>
-            <pre style={styles.code}>{algorithm2.code}</pre>
-          </CardText>
-        </Card>
+        { this.props.algorithms.map(this.renderAlgorithm) }
       </Paper>
     );
   }
 }
 
 Algorithm.propTypes = {
-  algorithm: PropTypes.shape({
+  algorithms: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string,
     code: PropTypes.string
-  }).isRequired,
-  algorithm2: PropTypes.shape({
+  })).isRequired,
+  selected: PropTypes.shape({
     label: PropTypes.string,
     code: PropTypes.string
-  }).isRequired
+  }),
+  onSelect: PropTypes.func.isRequired
+};
+
+Algorithm.defaultProps = {
+  selected: null
 };
 
 export default Algorithm;

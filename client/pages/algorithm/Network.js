@@ -11,13 +11,10 @@ const NETWORK_WIDTH = 600;
 const NETWORK_HEIGHT = 600;
 
 class Network extends React.Component {
-
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
-      nodes: props.network.nodes,
-      edges: props.network.edges,
       selectedNode: null,
       selectedEdge: null,
       showNodeDetails: false,
@@ -30,11 +27,12 @@ class Network extends React.Component {
     this.createNode(evt.offsetX, evt.offsetY);
   };
 
-  onEdgeClick = ({ target }) => this.setState({ selectedEdge: this.state.edges[target.attrs.index] });
+  onEdgeClick = ({ target }) => this.setState({ selectedEdge: this.props.edges[target.attrs.index] });
   onEdgeDoubleClick = () => this.openModal('Edge');
 
   onNodeClick = ({ target }) => {
-    const { edges, nodes, selectedNode } = this.state;
+    const { selectedNode } = this.state;
+    const { edges, nodes } = this.props;
     const clickedNode = nodes.filter(node => (node.id === target.attrs.id))[0];
     if (selectedNode === null) {
       this.setState({ selectedNode: clickedNode });
@@ -60,7 +58,7 @@ class Network extends React.Component {
     const { offsetX: x, offsetY: y } = evt;
     const { attrs: { id: draggedNodeId } } = target;
 
-    const edges = this.state.edges.map((edge) => {
+    const edges = this.props.edges.map((edge) => {
       if (edge[0].id === draggedNodeId) {
         edge[0].x = x;
         edge[0].y = y;
@@ -72,7 +70,7 @@ class Network extends React.Component {
       return edge;
     });
 
-    const nodes = this.state.nodes.map((node) => {
+    const nodes = this.props.nodes.map((node) => {
       if (node.id === draggedNodeId) {
         node.x = x;
         node.y = y;
@@ -86,14 +84,16 @@ class Network extends React.Component {
       selectedNode.y = y;
     }
 
-    this.setState({ edges, nodes, selectedNode });
+    this.setState({ selectedNode });
+    this.props.setNodes(nodes);
+    this.props.setEdges(edges);
   };
 
   openModal = type => this.setState({ [`show${type}Details`]: true });
   closeModal = () => this.setState({ showNodeDetails: false, showEdgeDetails: false, selectedNode: null, selectedEdge: null });
 
   createNode = (x, y) => {
-    const nodes = this.state.nodes;
+    const { nodes, setNodes } = this.props;
     nodes.push({
       id: Date.now(), // dummy temporary id
       x,
@@ -102,26 +102,27 @@ class Network extends React.Component {
       memory: {}
     });
 
-    this.setState({ nodes });
+    setNodes(nodes);
   };
   updateNode = (oldNode, newNode) => {
-    const nodes = this.state.nodes;
+    const { nodes, setNodes } = this.props;
     nodes.splice(nodes.indexOf(oldNode), 1, newNode);
-    this.setState({ nodes });
+    setNodes(nodes);
   };
   deleteNode = (node) => {
-    const { edges, nodes } = this.state;
+    const { edges, nodes, setEdges, setNodes } = this.props;
     nodes.splice(nodes.indexOf(node), 1);
     // remove all edges connected to that node
     const newEdges = edges.filter(edge => (edge[0].id !== node.id && edge[1].id !== node.id));
-    this.setState({ edges: newEdges, nodes });
+    setEdges(newEdges);
+    setNodes(nodes);
     this.closeModal();
   };
 
   deleteEdge = (edge) => {
-    const edges = this.state.edges;
+    const { edges, setEdges } = this.props;
     edges.splice(edges.indexOf(edge), 1);
-    this.setState({ edges });
+    setEdges(edges);
     this.closeModal();
   };
 
@@ -158,7 +159,8 @@ class Network extends React.Component {
   };
 
   render() {
-    const { nodes, edges, selectedNode, selectedEdge, showNodeDetails, showEdgeDetails } = this.state;
+    const { selectedNode, selectedEdge, showNodeDetails, showEdgeDetails } = this.state;
+    const { edges, nodes } = this.props;
 
     return (
       <Paper zDepth={2} style={styles.networkContainer}>
@@ -191,10 +193,10 @@ class Network extends React.Component {
 }
 
 Network.propTypes = {
-  network: PropTypes.shape({
-    nodes: PropTypes.array,
-    edges: PropTypes.array
-  }).isRequired
+  nodes: PropTypes.arrayOf(PropTypes.object).isRequired,
+  edges: PropTypes.arrayOf(PropTypes.array).isRequired,
+  setNodes: PropTypes.func.isRequired,
+  setEdges: PropTypes.func.isRequired
 };
 
 export default Network;
