@@ -6,13 +6,6 @@ import TextField from 'material-ui/TextField';
 import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
 
 const styles = {
-  errorMsg: {
-    flex: 1,
-    color: 'red',
-    fontSize: '20px',
-    fontWeight: 'bold',
-    textAlign: 'center'
-  },
   modalTitleContainer: {
     position: 'relative'
   },
