@@ -4,7 +4,7 @@ import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Algorithm from './Algorithm';
-import Network from './Network';
+import { Network } from '../../common';
 import styles from './style';
 
 
@@ -45,6 +45,7 @@ class AlgorithmPage extends React.Component {
               nodes={this.state.nodes}
               setEdges={this.setEdges}
               setNodes={this.setNodes}
+              configurable={true}
             />
           </div>
           <form ref={ref => (this.form = ref)} method="POST" action="/results/" style={styles.form}>

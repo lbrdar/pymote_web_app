@@ -4,11 +4,20 @@ import { Stage, Layer, Circle, Line, Rect } from 'react-konva';
 import Paper from 'material-ui/Paper';
 import EdgeDetails from './EdgeDetails';
 import NodeDetails from './NodeDetails';
-import styles from './style';
 
 const NODE_SIZE = 10;
 const NETWORK_WIDTH = 600;
 const NETWORK_HEIGHT = 600;
+
+const styles = {
+  networkContainer: {
+    margin: '0 auto',
+    width: `calc(${NETWORK_WIDTH}px + 2px)`
+  },
+  canvas: {
+    border: '1px solid black'
+  }
+};
 
 class Network extends React.Component {
   constructor() {
@@ -24,7 +33,8 @@ class Network extends React.Component {
 
   onStageClick = ({ evt }) => {
     this.setState({ selectedNode: null });
-    this.createNode(evt.offsetX, evt.offsetY);
+
+    if (this.props.configurable) this.createNode(evt.offsetX, evt.offsetY);
   };
 
   onEdgeClick = ({ target }) => this.setState({ selectedEdge: this.props.edges[target.attrs.index] });
@@ -32,11 +42,11 @@ class Network extends React.Component {
 
   onNodeClick = ({ target }) => {
     const { selectedNode } = this.state;
-    const { edges, nodes } = this.props;
+    const { edges, nodes, configurable } = this.props;
     const clickedNode = nodes.filter(node => (node.id === target.attrs.id))[0];
     if (selectedNode === null) {
       this.setState({ selectedNode: clickedNode });
-    } else if (clickedNode.id !== selectedNode.id) {
+    } else if (configurable && clickedNode.id !== selectedNode.id) {
       edges.push([
         {
           id: selectedNode.id,
@@ -55,6 +65,8 @@ class Network extends React.Component {
   };
   onNodeDoubleClick = () => this.openModal('Node');
   onNodeDragMove = ({ evt, target }) => {
+    if (!this.props.configurable) return;
+
     const { offsetX: x, offsetY: y } = evt;
     const { attrs: { id: draggedNodeId } } = target;
 
@@ -160,7 +172,7 @@ class Network extends React.Component {
 
   render() {
     const { selectedNode, selectedEdge, showNodeDetails, showEdgeDetails } = this.state;
-    const { edges, nodes } = this.props;
+    const { edges, nodes, configurable } = this.props;
 
     return (
       <Paper zDepth={2} style={styles.networkContainer}>
@@ -172,20 +184,22 @@ class Network extends React.Component {
           </Layer>
         </Stage>
         {showNodeDetails &&
-          <NodeDetails
-            node={selectedNode}
-            networkLimits={{ x: NETWORK_WIDTH, y: NETWORK_HEIGHT }}
-            closeModal={this.closeModal}
-            updateNode={this.updateNode}
-            deleteNode={this.deleteNode}
-          />
+        <NodeDetails
+          node={selectedNode}
+          networkLimits={{ x: NETWORK_WIDTH, y: NETWORK_HEIGHT }}
+          configurable={configurable}
+          closeModal={this.closeModal}
+          updateNode={this.updateNode}
+          deleteNode={this.deleteNode}
+        />
         }
         {showEdgeDetails &&
-          <EdgeDetails
-            edge={selectedEdge}
-            closeModal={this.closeModal}
-            deleteEdge={this.deleteEdge}
-          />
+        <EdgeDetails
+          edge={selectedEdge}
+          configurable={configurable}
+          closeModal={this.closeModal}
+          deleteEdge={this.deleteEdge}
+        />
         }
       </Paper>
     );
@@ -195,8 +209,15 @@ class Network extends React.Component {
 Network.propTypes = {
   nodes: PropTypes.arrayOf(PropTypes.object).isRequired,
   edges: PropTypes.arrayOf(PropTypes.array).isRequired,
-  setNodes: PropTypes.func.isRequired,
-  setEdges: PropTypes.func.isRequired
+  setNodes: PropTypes.func,
+  setEdges: PropTypes.func,
+  configurable: PropTypes.bool
+};
+
+Network.defaultProps = {
+  setNodes: () => {},
+  setEdges: () => {},
+  configurable: false
 };
 
 export default Network;

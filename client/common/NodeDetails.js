@@ -4,7 +4,27 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
-import styles from './style';
+
+const styles = {
+  errorMsg: {
+    flex: 1,
+    color: 'red',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  modalTitleContainer: {
+    position: 'relative'
+  },
+  modalTitle: {
+    display: 'inline-block'
+  },
+  modalDeleteButton: {
+    display: 'inline-block',
+    position: 'absolute',
+    right: '24px'
+  }
+};
 
 
 class NodeDetails extends React.Component {
@@ -78,31 +98,39 @@ class NodeDetails extends React.Component {
   renderTitle = () => (
     <div style={styles.modalTitleContainer}>
       <p style={styles.modalTitle}>Node details</p>
-      <RaisedButton
-        label="Delete"
-        icon={<DeleteForever />}
-        secondary={true}
-        style={styles.modalDeleteButton}
-        onClick={this.remove}
-      />
+      { this.props.configurable &&
+        <RaisedButton
+          label="Delete"
+          icon={<DeleteForever />}
+          secondary={true}
+          style={styles.modalDeleteButton}
+          onClick={this.remove}
+        />
+      }
     </div>
   );
 
   render() {
     const { x, y, theta, memory, error } = this.state;
+    const { configurable } = this.props;
     const actions = [
       <FlatButton
         label="Close"
         primary={true}
         onClick={this.props.closeModal}
-      />,
-      <RaisedButton
-        label="Save changes"
-        primary={true}
-        keyboardFocused={true}
-        onClick={this.save}
       />
     ];
+
+    if (configurable) {
+      actions.push(
+        <RaisedButton
+          label="Save changes"
+          primary={true}
+          keyboardFocused={true}
+          onClick={this.save}
+        />
+      );
+    }
 
     return (
       <Dialog
@@ -121,24 +149,28 @@ class NodeDetails extends React.Component {
           value={this.props.node.id}
         />
         <TextField
+          disabled={!configurable}
           fullWidth
           floatingLabelText="X position"
           value={x}
           onChange={(e, text) => this.setState({ x: text })}
         />
         <TextField
+          disabled={!configurable}
           fullWidth
           floatingLabelText="Y position"
           value={y}
           onChange={(e, text) => this.setState({ y: text })}
         />
         <TextField
+          disabled={!configurable}
           fullWidth
           floatingLabelText="Theta"
           value={theta}
           onChange={(e, text) => this.setState({ theta: text })}
         />
         <TextField
+          disabled={!configurable}
           fullWidth
           floatingLabelText="Memory"
           multiLine
@@ -166,6 +198,7 @@ NodeDetails.propTypes = {
   closeModal: PropTypes.func.isRequired,
   updateNode: PropTypes.func.isRequired,
   deleteNode: PropTypes.func.isRequired,
+  configurable: PropTypes.bool.isRequired
 };
 
 export default NodeDetails;

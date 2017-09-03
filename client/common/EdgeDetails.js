@@ -4,7 +4,27 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
-import styles from './style';
+
+const styles = {
+  errorMsg: {
+    flex: 1,
+    color: 'red',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  modalTitleContainer: {
+    position: 'relative'
+  },
+  modalTitle: {
+    display: 'inline-block'
+  },
+  modalDeleteButton: {
+    display: 'inline-block',
+    position: 'absolute',
+    right: '24px'
+  }
+};
 
 
 class EdgeDetails extends React.Component {
@@ -13,13 +33,15 @@ class EdgeDetails extends React.Component {
   renderTitle = () => (
     <div style={styles.modalTitleContainer}>
       <p style={styles.modalTitle}>Edge details</p>
-      <RaisedButton
-        label="Delete"
-        icon={<DeleteForever />}
-        secondary={true}
-        style={styles.modalDeleteButton}
-        onClick={this.remove}
-      />
+      { this.props.configurable &&
+        <RaisedButton
+          label="Delete"
+          icon={<DeleteForever />}
+          secondary={true}
+          style={styles.modalDeleteButton}
+          onClick={this.remove}
+        />
+      }
     </div>
   );
 
@@ -64,6 +86,7 @@ EdgeDetails.propTypes = {
   })).isRequired,
   closeModal: PropTypes.func.isRequired,
   deleteEdge: PropTypes.func.isRequired,
+  configurable: PropTypes.bool.isRequired
 };
 
 export default EdgeDetails;
