@@ -6,12 +6,23 @@ from pymote.algorithms.readsensors import ReadSensors
 def get_nodes(network):
     nodes = []
     for n in network.nodes():
+        memory = {}
+        for key in n.memory.keys():
+            value = n.memory[key]
+            if key == 'Neighbors':
+                neighbors = []
+                for neighbour in value:
+                    neighbors.append(neighbour.id)
+                memory[key] = neighbors
+            else:
+                memory[key] = value
+
         node = {
             'id': n.id,
             'x': network.pos[n][0],
             'y': network.pos[n][1],
             'theta': network.ori[n] * 180. / pi,
-            'memory': n.memory
+            'memory': memory
         }
         nodes.append(node)
     return nodes
@@ -47,7 +58,10 @@ def generate_network(nodes, algorithmName):
         network.algorithms = ( (ReadSensors, {}), )
 
     for node in nodes:
-        createdNode = network.add_node(pos=[node['x'], node['y']], ori=node['theta'])
-        createdNode.memory = node['memory']
+        createdNode = network.add_node(pos=[node['x'], node['y']], ori=node['theta'], commRange=600)
+        memory = {}
+        for k in node['memory'].keys():
+            memory[k.encode('ascii', 'ignore')] = node['memory'][k].encode('ascii', 'ignore')
+        createdNode.memory = memory
 
     return network

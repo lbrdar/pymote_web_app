@@ -49,7 +49,6 @@ class Results(View):
 
         results = [get_network_dict(network)]
         while (network.algorithmState['finished'] == False):
-            print('Test')
             simulation.run_step()
             results.append(get_network_dict(network))
 
