@@ -36,17 +36,19 @@ class NodeDetails extends React.Component {
       x: props.node.x,
       y: props.node.y,
       theta: props.node.theta,
+      commRange: props.node.commRange,
       memory: JSON.stringify(props.node.memory, null, 2),
       error: ''
     };
   }
 
   isValid = () => {
-    const { x, y, theta, memory } = this.state;
+    const { x, y, theta, commRange, memory } = this.state;
     const { networkLimits } = this.props;
     const parsedX = parseFloat(x);
     const parsedY = parseFloat(y);
     const parsedTheta = parseFloat(theta);
+    const parsedCommRange = parseFloat(commRange);
     let parsedMemory = null;
     try {
       parsedMemory = JSON.parse(memory);
@@ -67,6 +69,10 @@ class NodeDetails extends React.Component {
       this.setState({ error: 'Invalid theta value.' });
       return false;
     }
+    if (isNaN(parsedCommRange) || parsedCommRange <= 0) {
+      this.setState({ error: 'Invalid communication range.' });
+      return false;
+    }
     if (parsedMemory !== Object(parsedMemory)) {
       this.setState({ error: 'Memory must be in a format of an object containing "key":"value" pairs.' });
       return false;
@@ -76,7 +82,7 @@ class NodeDetails extends React.Component {
   };
 
   save = () => {
-    const { x, y, theta, memory } = this.state;
+    const { x, y, theta, commRange, memory } = this.state;
 
     if (!this.isValid()) return;
 
@@ -87,6 +93,7 @@ class NodeDetails extends React.Component {
         x: parseFloat(x),
         y: parseFloat(y),
         theta: parseFloat(theta),
+        commRange: parseFloat(commRange),
         memory: JSON.parse(memory)
       }
     );
@@ -111,7 +118,7 @@ class NodeDetails extends React.Component {
   );
 
   render() {
-    const { x, y, theta, memory, error } = this.state;
+    const { x, y, theta, commRange, memory, error } = this.state;
     const { configurable } = this.props;
     const actions = [
       <FlatButton
@@ -172,6 +179,13 @@ class NodeDetails extends React.Component {
         <TextField
           disabled={!configurable}
           fullWidth
+          floatingLabelText="Communication range"
+          value={commRange}
+          onChange={(e, text) => this.setState({ commRange: text })}
+        />
+        <TextField
+          disabled={!configurable}
+          fullWidth
           floatingLabelText="Memory"
           multiLine
           rows={5}
@@ -189,6 +203,7 @@ NodeDetails.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number,
     theta: PropTypes.number,
+    commRange: PropTypes.number,
     memory: PropTypes.object,
   }).isRequired,
   networkLimits: PropTypes.shape({

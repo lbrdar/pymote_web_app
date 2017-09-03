@@ -24,6 +24,7 @@ class ResultsPage extends React.Component {
 
   render() {
     const { step } = this.state;
+    const network = this.props.results[step];
     return (
       <MuiThemeProvider>
         <div>
@@ -41,8 +42,9 @@ class ResultsPage extends React.Component {
               onChange={this.onStepChange}
             />
             <Network
-              edges={this.props.results[step].edges}
-              nodes={this.props.results[step].nodes}
+              settings={network.settings}
+              edges={network.edges}
+              nodes={network.nodes}
               configurable={false}
             />
           </div>
@@ -56,7 +58,8 @@ ResultsPage.propTypes = {
   results: PropTypes.arrayOf(
     PropTypes.shape({
       nodes: PropTypes.array,
-      edges: PropTypes.array
+      edges: PropTypes.array,
+      settings: PropTypes.object
     })
   ).isRequired
 };

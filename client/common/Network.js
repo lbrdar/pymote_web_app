@@ -2,8 +2,10 @@
 import React, { PropTypes } from 'react';
 import { Stage, Layer, Circle, Line, Rect } from 'react-konva';
 import Paper from 'material-ui/Paper';
+import RaisedButton from 'material-ui/RaisedButton';
 import EdgeDetails from './EdgeDetails';
 import NodeDetails from './NodeDetails';
+import NetworkDetails from './NetworkDetails';
 
 const NODE_SIZE = 10;
 const NETWORK_WIDTH = 600;
@@ -11,8 +13,7 @@ const NETWORK_HEIGHT = 600;
 
 const styles = {
   networkContainer: {
-    margin: '0 auto',
-    width: `calc(${NETWORK_WIDTH}px + 2px)`
+    margin: '0 auto'
   },
   canvas: {
     border: '1px solid black'
@@ -27,9 +28,12 @@ class Network extends React.Component {
       selectedNode: null,
       selectedEdge: null,
       showNodeDetails: false,
-      showEdgeDetails: false
+      showEdgeDetails: false,
+      showSettings: false
     };
   }
+
+  onSettingsClick = () => this.setState({ showSettings: true });
 
   onStageClick = ({ evt }) => {
     this.setState({ selectedNode: null });
@@ -102,15 +106,22 @@ class Network extends React.Component {
   };
 
   openModal = type => this.setState({ [`show${type}Details`]: true });
-  closeModal = () => this.setState({ showNodeDetails: false, showEdgeDetails: false, selectedNode: null, selectedEdge: null });
+  closeModal = () => this.setState({
+    showSettings: false,
+    showNodeDetails: false,
+    showEdgeDetails: false,
+    selectedNode: null,
+    selectedEdge: null
+  });
 
   createNode = (x, y) => {
-    const { nodes, setNodes } = this.props;
+    const { nodes, setNodes, settings } = this.props;
     nodes.push({
       id: Date.now(), // dummy temporary id
       x,
       y,
-      theta: 0,
+      theta: settings.defaultTheta,
+      commRange: settings.defaultCommRange,
       memory: {}
     });
 
@@ -171,52 +182,73 @@ class Network extends React.Component {
   };
 
   render() {
-    const { selectedNode, selectedEdge, showNodeDetails, showEdgeDetails } = this.state;
-    const { edges, nodes, configurable } = this.props;
+    const { selectedNode, selectedEdge, showNodeDetails, showEdgeDetails, showSettings } = this.state;
+    const { settings: { width, height }, edges, nodes, configurable } = this.props;
 
     return (
-      <Paper zDepth={2} style={styles.networkContainer}>
-        <Stage width={NETWORK_WIDTH} height={NETWORK_HEIGHT} style={styles.canvas}>
-          <Layer>
-            <Rect x={0} y={0} width={NETWORK_WIDTH} height={NETWORK_HEIGHT} onClick={this.onStageClick} />
-            { edges.map(this.renderEdge) }
-            { nodes.map(this.renderNode) }
-          </Layer>
-        </Stage>
-        {showNodeDetails &&
-        <NodeDetails
-          node={selectedNode}
-          networkLimits={{ x: NETWORK_WIDTH, y: NETWORK_HEIGHT }}
-          configurable={configurable}
-          closeModal={this.closeModal}
-          updateNode={this.updateNode}
-          deleteNode={this.deleteNode}
-        />
-        }
-        {showEdgeDetails &&
-        <EdgeDetails
-          edge={selectedEdge}
-          configurable={configurable}
-          closeModal={this.closeModal}
-          deleteEdge={this.deleteEdge}
-        />
-        }
-      </Paper>
+      <div style={{ ...styles.networkContainer, width: `${width + 2}px` }}>
+        <RaisedButton primary label="Network settings" onClick={this.onSettingsClick} />
+        <Paper zDepth={2}>
+          <Stage width={width} height={height} style={styles.canvas}>
+            <Layer>
+              <Rect x={0} y={0} width={width} height={height} onClick={this.onStageClick} />
+              { edges.map(this.renderEdge) }
+              { nodes.map(this.renderNode) }
+            </Layer>
+          </Stage>
+          {showNodeDetails &&
+            <NodeDetails
+              node={selectedNode}
+              networkLimits={{ x: width, y: height }}
+              configurable={configurable}
+              closeModal={this.closeModal}
+              updateNode={this.updateNode}
+              deleteNode={this.deleteNode}
+            />
+          }
+          {showEdgeDetails &&
+            <EdgeDetails
+              edge={selectedEdge}
+              configurable={configurable}
+              closeModal={this.closeModal}
+              deleteEdge={this.deleteEdge}
+            />
+          }
+          {showSettings &&
+            <NetworkDetails
+              settings={this.props.settings}
+              configurable={configurable}
+              closeModal={this.closeModal}
+              updateNetwork={this.props.setSettings}
+            />
+          }
+        </Paper>
+      </div>
     );
   }
 }
 
 Network.propTypes = {
+  settings: PropTypes.shape({
+    width: PropTypes.number,
+    height: PropTypes.number,
+    defaultCommRange: PropTypes.number,
+    defaultTheta: PropTypes.number
+  }).isRequired,
   nodes: PropTypes.arrayOf(PropTypes.object).isRequired,
   edges: PropTypes.arrayOf(PropTypes.array).isRequired,
   setNodes: PropTypes.func,
   setEdges: PropTypes.func,
+  setSettings: PropTypes.func,
   configurable: PropTypes.bool
 };
 
 Network.defaultProps = {
+  width: NETWORK_WIDTH,
+  height: NETWORK_HEIGHT,
   setNodes: () => {},
   setEdges: () => {},
+  setSettings: () => {},
   configurable: false
 };
 

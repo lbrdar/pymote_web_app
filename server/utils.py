@@ -22,6 +22,7 @@ def get_nodes(network):
             'x': network.pos[n][0],
             'y': network.pos[n][1],
             'theta': network.ori[n] * 180. / pi,
+            'commRange': n.commRange,
             'memory': memory
         }
         nodes.append(node)
@@ -48,6 +49,10 @@ def get_network_dict(network):
     return {
         'nodes': get_nodes(network),
         'edges': get_edges(network),
+        'settings': {
+            'width': network.environment.im.shape[0],
+            'height': network.environment.im.shape[1]
+        }
     }
 
 def generate_network(nodes, algorithmName):
@@ -58,7 +63,7 @@ def generate_network(nodes, algorithmName):
         network.algorithms = ( (ReadSensors, {}), )
 
     for node in nodes:
-        createdNode = network.add_node(pos=[node['x'], node['y']], ori=node['theta'], commRange=600)
+        createdNode = network.add_node(pos=[node['x'], node['y']], ori=node['theta'], commRange=node['commRange'])
         memory = {}
         for k in node['memory'].keys():
             memory[k.encode('ascii', 'ignore')] = node['memory'][k].encode('ascii', 'ignore')

@@ -16,9 +16,11 @@ class AlgorithmPage extends React.Component {
       algorithm: null,
       nodes: props.network.nodes,
       edges: props.network.edges,
+      settings: props.network.settings
     };
   }
 
+  setSettings = settings => this.setState({ settings });
   setEdges = edges => this.setState({ edges });
   setNodes = nodes => this.setState({ nodes });
   selectAlgorithm = algorithm => this.setState({ algorithm });
@@ -35,17 +37,19 @@ class AlgorithmPage extends React.Component {
             showMenuIconButton={false}
           />
           <div style={styles.content}>
+            <Network
+              settings={this.state.settings}
+              edges={this.state.edges}
+              nodes={this.state.nodes}
+              setSettings={this.setSettings}
+              setEdges={this.setEdges}
+              setNodes={this.setNodes}
+              configurable={true}
+            />
             <Algorithm
               algorithms={this.props.algorithms}
               selected={this.state.algorithm}
               onSelect={this.selectAlgorithm}
-            />
-            <Network
-              edges={this.state.edges}
-              nodes={this.state.nodes}
-              setEdges={this.setEdges}
-              setNodes={this.setNodes}
-              configurable={true}
             />
           </div>
           <form ref={ref => (this.form = ref)} method="POST" action="/results/" style={styles.form}>
@@ -65,7 +69,8 @@ AlgorithmPage.propTypes = {
   })).isRequired,
   network: PropTypes.shape({
     nodes: PropTypes.array,
-    edges: PropTypes.array
+    edges: PropTypes.array,
+    settings: PropTypes.object
   }).isRequired,
   csrfmiddlewaretoken: PropTypes.string
 };
