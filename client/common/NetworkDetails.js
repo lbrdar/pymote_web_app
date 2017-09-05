@@ -104,14 +104,14 @@ class NetworkDetails extends React.Component {
         <TextField
           disabled={!configurable}
           fullWidth
-          floatingLabelText="Network width"
+          floatingLabelText="Environment width"
           value={width}
           onChange={(e, text) => this.setState({ width: text })}
         />
         <TextField
           disabled={!configurable}
           fullWidth
-          floatingLabelText="Network height"
+          floatingLabelText="Environment height"
           value={height}
           onChange={(e, text) => this.setState({ height: text })}
         />
