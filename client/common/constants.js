@@ -1,0 +1,8 @@
+export default {
+  NODE_SIZE: 10,
+  NETWORK_WIDTH: 600,
+  NETWORK_HEIGHT: 600,
+  COMM_RANGE: 100,
+  THETA: 0,
+  USE_COMM_RANGE: false
+};
