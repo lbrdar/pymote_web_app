@@ -3,6 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import Toggle from 'material-ui/Toggle';
 
 const styles = {
   errorMsg: {
@@ -11,6 +12,14 @@ const styles = {
     fontSize: '20px',
     fontWeight: 'bold',
     textAlign: 'center'
+  },
+  textLabel: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    color: 'black'
+  },
+  toggle: {
+    marginTop: '20px'
   }
 };
 
@@ -24,6 +33,7 @@ class NetworkDetails extends React.Component {
       height: props.settings.height,
       defaultCommRange: props.settings.defaultCommRange,
       defaultTheta: props.settings.defaultTheta,
+      useCommRange: props.settings.useCommRange,
       error: ''
     };
   }
@@ -56,7 +66,7 @@ class NetworkDetails extends React.Component {
   };
 
   save = () => {
-    const { width, height, defaultCommRange, defaultTheta } = this.state;
+    const { width, height, defaultCommRange, defaultTheta, useCommRange } = this.state;
 
     if (!this.isValid()) return;
 
@@ -64,13 +74,14 @@ class NetworkDetails extends React.Component {
       width: parseInt(width, 10),
       height: parseInt(height, 10),
       defaultCommRange: parseFloat(defaultCommRange),
-      defaultTheta: parseFloat(defaultTheta)
+      defaultTheta: parseFloat(defaultTheta),
+      useCommRange
     });
     this.props.closeModal();
   };
 
   render() {
-    const { width, height, defaultCommRange, defaultTheta, error } = this.state;
+    const { width, height, defaultCommRange, defaultTheta, useCommRange, error } = this.state;
     const { configurable } = this.props;
     const actions = [
       <FlatButton
@@ -105,6 +116,7 @@ class NetworkDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Environment width"
+          floatingLabelStyle={styles.textLabel}
           value={width}
           onChange={(e, text) => this.setState({ width: text })}
         />
@@ -112,6 +124,7 @@ class NetworkDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Environment height"
+          floatingLabelStyle={styles.textLabel}
           value={height}
           onChange={(e, text) => this.setState({ height: text })}
         />
@@ -119,6 +132,7 @@ class NetworkDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Default communication range of new nodes"
+          floatingLabelStyle={styles.textLabel}
           value={defaultCommRange}
           onChange={(e, text) => this.setState({ defaultCommRange: text })}
         />
@@ -126,8 +140,17 @@ class NetworkDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Default theta of the new nodes"
+          floatingLabelStyle={styles.textLabel}
           value={defaultTheta}
           onChange={(e, text) => this.setState({ defaultTheta: text })}
+        />
+        <Toggle
+          disabled={!configurable}
+          label="Calculate edges depending on communication range"
+          labelPosition="right"
+          style={styles.toggle}
+          toggled={useCommRange}
+          onToggle={(e, value) => this.setState({ useCommRange: value })}
         />
       </Dialog>
     );
@@ -139,7 +162,8 @@ NetworkDetails.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
     defaultCommRange: PropTypes.number,
-    defaultTheta: PropTypes.number
+    defaultTheta: PropTypes.number,
+    useCommRange: PropTypes.bool
   }).isRequired,
   closeModal: PropTypes.func.isRequired,
   updateNetwork: PropTypes.func.isRequired,

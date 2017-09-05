@@ -6,10 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import EdgeDetails from './EdgeDetails';
 import NodeDetails from './NodeDetails';
 import NetworkDetails from './NetworkDetails';
-
-const NODE_SIZE = 10;
-const NETWORK_WIDTH = 600;
-const NETWORK_HEIGHT = 600;
+import constants from './constants';
 
 const styles = {
   networkContainer: {
@@ -46,11 +43,11 @@ class Network extends React.Component {
 
   onNodeClick = ({ target }) => {
     const { selectedNode } = this.state;
-    const { edges, nodes, configurable } = this.props;
+    const { edges, nodes, settings, configurable, setEdges } = this.props;
+    const allowChange = configurable && !settings.useCommRange;
     const clickedNode = nodes.filter(node => (node.id === target.attrs.id))[0];
-    if (selectedNode === null) {
-      this.setState({ selectedNode: clickedNode });
-    } else if (configurable && clickedNode.id !== selectedNode.id) {
+
+    if (allowChange && selectedNode !== null && clickedNode.id !== selectedNode.id) {
       edges.push([
         {
           id: selectedNode.id,
@@ -63,8 +60,10 @@ class Network extends React.Component {
           y: clickedNode.y
         }
       ]);
-
-      this.setState({ edges, selectedNode: null });
+      this.setState({ selectedNode: null });
+      setEdges(edges);
+    } else {
+      this.setState({ selectedNode: clickedNode });
     }
   };
   onNodeDoubleClick = () => this.openModal('Node');
@@ -74,17 +73,20 @@ class Network extends React.Component {
     const { offsetX: x, offsetY: y } = evt;
     const { attrs: { id: draggedNodeId } } = target;
 
-    const edges = this.props.edges.map((edge) => {
-      if (edge[0].id === draggedNodeId) {
-        edge[0].x = x;
-        edge[0].y = y;
-      } else if (edge[1].id === draggedNodeId) {
-        edge[1].x = x;
-        edge[1].y = y;
-      }
+    if (!this.props.settings.useCommRange) { // if using commRange, no need for this because all edges will be recalculated
+      const edges = this.props.edges.map((edge) => {
+        if (edge[0].id === draggedNodeId) {
+          edge[0].x = x;
+          edge[0].y = y;
+        } else if (edge[1].id === draggedNodeId) {
+          edge[1].x = x;
+          edge[1].y = y;
+        }
 
-      return edge;
-    });
+        return edge;
+      });
+      this.props.setEdges(edges);
+    }
 
     const nodes = this.props.nodes.map((node) => {
       if (node.id === draggedNodeId) {
@@ -102,7 +104,6 @@ class Network extends React.Component {
 
     this.setState({ selectedNode });
     this.props.setNodes(nodes);
-    this.props.setEdges(edges);
   };
 
   openModal = type => this.setState({ [`show${type}Details`]: true });
@@ -133,11 +134,13 @@ class Network extends React.Component {
     setNodes(nodes);
   };
   deleteNode = (node) => {
-    const { edges, nodes, setEdges, setNodes } = this.props;
+    const { edges, nodes, settings, setEdges, setNodes } = this.props;
     nodes.splice(nodes.indexOf(node), 1);
-    // remove all edges connected to that node
-    const newEdges = edges.filter(edge => (edge[0].id !== node.id && edge[1].id !== node.id));
-    setEdges(newEdges);
+    if (!settings.useCommRange) {
+      // remove all edges connected to that node
+      const newEdges = edges.filter(edge => (edge[0].id !== node.id && edge[1].id !== node.id));
+      setEdges(newEdges);
+    }
     setNodes(nodes);
     this.closeModal();
   };
@@ -156,10 +159,10 @@ class Network extends React.Component {
       index={index}
       x={node.x}
       y={node.y}
-      radius={NODE_SIZE}
+      radius={constants.NODE_SIZE}
       fill={(this.state.selectedNode && this.state.selectedNode.id === node.id) ? 'red' : 'green'}
       shadowBlur={10}
-      draggable="true"
+      draggable={this.props.configurable}
       onClick={this.onNodeClick}
       onDblclick={this.onNodeDoubleClick}
       onDragMove={this.onNodeDragMove}
@@ -183,7 +186,7 @@ class Network extends React.Component {
 
   render() {
     const { selectedNode, selectedEdge, showNodeDetails, showEdgeDetails, showSettings } = this.state;
-    const { settings: { width, height }, edges, nodes, configurable } = this.props;
+    const { settings: { width, height, useCommRange }, edges, nodes, configurable } = this.props;
 
     return (
       <div style={{ ...styles.networkContainer, width: `${width + 2}px` }}>
@@ -209,7 +212,7 @@ class Network extends React.Component {
           {showEdgeDetails &&
             <EdgeDetails
               edge={selectedEdge}
-              configurable={configurable}
+              configurable={configurable && !useCommRange}
               closeModal={this.closeModal}
               deleteEdge={this.deleteEdge}
             />
@@ -233,7 +236,8 @@ Network.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
     defaultCommRange: PropTypes.number,
-    defaultTheta: PropTypes.number
+    defaultTheta: PropTypes.number,
+    useCommRange: PropTypes.bool
   }).isRequired,
   nodes: PropTypes.arrayOf(PropTypes.object).isRequired,
   edges: PropTypes.arrayOf(PropTypes.array).isRequired,
@@ -244,8 +248,8 @@ Network.propTypes = {
 };
 
 Network.defaultProps = {
-  width: NETWORK_WIDTH,
-  height: NETWORK_HEIGHT,
+  width: constants.NETWORK_WIDTH,
+  height: constants.NETWORK_HEIGHT,
   setNodes: () => {},
   setEdges: () => {},
   setSettings: () => {},

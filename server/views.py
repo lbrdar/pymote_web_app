@@ -44,7 +44,7 @@ class Results(View):
 
     def post(self, request):
         data = json.loads(request.POST['data'])
-        network = generate_network(data['nodes'], data['algorithm']['label'])
+        network = generate_network(data['settings'], data['nodes'], data['edges'], data['algorithm']['label'])
         simulation = Simulation(network)
 
         results = [get_network_dict(network)]

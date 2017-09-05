@@ -1,5 +1,6 @@
 from numpy import pi
 from pymote import *
+from pymote.environment import Environment2D
 from pymote.algorithms.broadcast import Flood
 from pymote.algorithms.readsensors import ReadSensors
 
@@ -51,14 +52,12 @@ def get_network_dict(network):
         'edges': get_edges(network),
         'settings': {
             'width': network.environment.im.shape[0],
-            'height': network.environment.im.shape[1],
-            'defaultCommRange': 100,
-            'defaultTheta': 0
+            'height': network.environment.im.shape[1]
         }
     }
 
-def generate_network(nodes, algorithmName):
-    network = Network()
+def generate_network(settings, nodes, edges, algorithmName):
+    network = Network(environment=Environment2D(shape=(settings['width'], settings['height'])))
     if algorithmName == 'Flood':
         network.algorithms = ( (Flood, {'informationKey':'I'}), )
     elif algorithmName == 'ReadSensors':
@@ -70,5 +69,12 @@ def generate_network(nodes, algorithmName):
         for k in node['memory'].keys():
             memory[k.encode('ascii', 'ignore')] = node['memory'][k].encode('ascii', 'ignore')
         createdNode.memory = memory
+
+    """
+    if not settings['useCommRange']:
+        network.remove_edges_from(network.edges())
+        for edge in edges:
+            network.add_edge(edge[0], edge[1])
+    """
 
     return network
