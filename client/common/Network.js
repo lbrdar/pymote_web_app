@@ -123,6 +123,9 @@ class Network extends React.Component {
       y,
       theta: settings.defaultTheta,
       commRange: settings.defaultCommRange,
+      status: '',
+      inbox: [],
+      outbox: [],
       memory: {}
     });
 

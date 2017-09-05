@@ -88,17 +88,21 @@ class NodeDetails extends React.Component {
 
   save = () => {
     const { x, y, theta, commRange, memory } = this.state;
+    const { id, status, inbox, outbox } = this.props.node;
 
     if (!this.isValid()) return;
 
     this.props.updateNode(
       this.props.node,
       {
-        id: this.props.node.id,
+        id,
         x: parseFloat(x),
         y: parseFloat(y),
         theta: parseFloat(theta),
         commRange: parseFloat(commRange),
+        status,
+        inbox,
+        outbox,
         memory: JSON.parse(memory)
       }
     );
@@ -124,7 +128,7 @@ class NodeDetails extends React.Component {
 
   render() {
     const { x, y, theta, commRange, memory, error } = this.state;
-    const { configurable } = this.props;
+    const { configurable, node: { id, status, inbox, outbox } } = this.props;
     const actions = [
       <FlatButton
         label="Close"
@@ -158,7 +162,7 @@ class NodeDetails extends React.Component {
           disabled
           fullWidth
           floatingLabelText="Id"
-          value={this.props.node.id}
+          value={id}
         />
         <TextField
           disabled={!configurable}
@@ -193,6 +197,13 @@ class NodeDetails extends React.Component {
           onChange={(e, text) => this.setState({ commRange: text })}
         />
         <TextField
+          disabled
+          fullWidth
+          floatingLabelText="Status"
+          floatingLabelStyle={styles.textLabel}
+          value={status || ' '}
+        />
+        <TextField
           disabled={!configurable}
           fullWidth
           floatingLabelText="Memory"
@@ -201,6 +212,24 @@ class NodeDetails extends React.Component {
           rows={5}
           value={memory}
           onChange={(e, text) => this.setState({ memory: text })}
+        />
+        <TextField
+          disabled
+          fullWidth
+          floatingLabelText="Inbox"
+          floatingLabelStyle={styles.textLabel}
+          multiLine
+          rows={5}
+          value={inbox}
+        />
+        <TextField
+          disabled
+          fullWidth
+          floatingLabelText="Outbox"
+          floatingLabelStyle={styles.textLabel}
+          multiLine
+          rows={5}
+          value={outbox}
         />
       </Dialog>
     );
@@ -214,6 +243,9 @@ NodeDetails.propTypes = {
     y: PropTypes.number,
     theta: PropTypes.number,
     commRange: PropTypes.number,
+    status: PropTypes.string,
+    inbox: PropTypes.array,
+    outbox: PropTypes.array,
     memory: PropTypes.object,
   }).isRequired,
   networkLimits: PropTypes.shape({

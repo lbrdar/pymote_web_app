@@ -18,12 +18,23 @@ def get_nodes(network):
             else:
                 memory[key] = value
 
+        inbox = []
+        for inMsg in n.inbox:
+            inbox.append(str(inMsg))
+
+        outbox = []
+        for outMsg in n.inbox:
+            outbox.append(str(outMsg))
+
         node = {
             'id': n.id,
             'x': network.pos[n][0],
             'y': network.pos[n][1],
             'theta': network.ori[n] * 180. / pi,
             'commRange': n.commRange,
+            'status': n.status,
+            'inbox': inbox,
+            'outbox': outbox,
             'memory': memory
         }
         nodes.append(node)
