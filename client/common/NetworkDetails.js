@@ -22,8 +22,8 @@ class NetworkDetails extends React.Component {
     this.state = {
       width: props.settings.width,
       height: props.settings.height,
-      defaultCommRange: 600,
-      defaultTheta: 0,
+      defaultCommRange: props.settings.defaultCommRange,
+      defaultTheta: props.settings.defaultTheta,
       error: ''
     };
   }
@@ -137,7 +137,9 @@ class NetworkDetails extends React.Component {
 NetworkDetails.propTypes = {
   settings: PropTypes.shape({
     width: PropTypes.number,
-    height: PropTypes.number
+    height: PropTypes.number,
+    defaultCommRange: PropTypes.number,
+    defaultTheta: PropTypes.number
   }).isRequired,
   closeModal: PropTypes.func.isRequired,
   updateNetwork: PropTypes.func.isRequired,

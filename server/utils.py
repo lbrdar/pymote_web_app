@@ -51,7 +51,9 @@ def get_network_dict(network):
         'edges': get_edges(network),
         'settings': {
             'width': network.environment.im.shape[0],
-            'height': network.environment.im.shape[1]
+            'height': network.environment.im.shape[1],
+            'defaultCommRange': 100,
+            'defaultTheta': 0
         }
     }
 
