@@ -13,6 +13,11 @@ const styles = {
     fontWeight: 'bold',
     textAlign: 'center'
   },
+  textLabel: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    color: 'black'
+  },
   modalTitleContainer: {
     position: 'relative'
   },
@@ -159,6 +164,7 @@ class NodeDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="X position"
+          floatingLabelStyle={styles.textLabel}
           value={x}
           onChange={(e, text) => this.setState({ x: text })}
         />
@@ -166,6 +172,7 @@ class NodeDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Y position"
+          floatingLabelStyle={styles.textLabel}
           value={y}
           onChange={(e, text) => this.setState({ y: text })}
         />
@@ -173,6 +180,7 @@ class NodeDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Theta"
+          floatingLabelStyle={styles.textLabel}
           value={theta}
           onChange={(e, text) => this.setState({ theta: text })}
         />
@@ -180,6 +188,7 @@ class NodeDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Communication range"
+          floatingLabelStyle={styles.textLabel}
           value={commRange}
           onChange={(e, text) => this.setState({ commRange: text })}
         />
@@ -187,6 +196,7 @@ class NodeDetails extends React.Component {
           disabled={!configurable}
           fullWidth
           floatingLabelText="Memory"
+          floatingLabelStyle={styles.textLabel}
           multiLine
           rows={5}
           value={memory}

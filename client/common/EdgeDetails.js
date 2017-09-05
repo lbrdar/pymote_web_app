@@ -6,6 +6,11 @@ import TextField from 'material-ui/TextField';
 import DeleteForever from 'material-ui/svg-icons/action/delete-forever';
 
 const styles = {
+  textLabel: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    color: 'black'
+  },
   modalTitleContainer: {
     position: 'relative'
   },
@@ -60,12 +65,14 @@ class EdgeDetails extends React.Component {
           disabled
           fullWidth
           floatingLabelText="From"
+          floatingLabelStyle={styles.textLabel}
           value={this.props.edge[0].id}
         />
         <TextField
           disabled
           fullWidth
           floatingLabelText="To"
+          floatingLabelStyle={styles.textLabel}
           value={this.props.edge[1].id}
         />
       </Dialog>
