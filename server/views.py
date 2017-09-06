@@ -3,7 +3,8 @@ from django.shortcuts import render
 from django.middleware.csrf import get_token
 from pymote import *
 from pymote.algorithms.broadcast import Flood
-from pymote.algorithms.readsensors import ReadSensors
+from pymote.algorithms.niculescu2003.dvhop import DVHop
+from pymote.algorithms.santoro2007.traversal import DFT, DFStar
 from utils import get_network_dict, generate_network
 import inspect
 import json
@@ -21,8 +22,16 @@ class Algorithm(View):
                     'code': inspect.getsource(Flood),
                 },
                 {
-                    'label': 'ReadSensors',
-                    'code': inspect.getsource(ReadSensors),
+                    'label': 'DVHop',
+                    'code': inspect.getsource(DVHop),
+                },
+                {
+                    'label': 'DFT',
+                    'code': inspect.getsource(DFT),
+                },
+                {
+                    'label': 'DFStar',
+                    'code': inspect.getsource(DFStar),
                 }
             ],
             'csrfmiddlewaretoken': str(get_token(request))

@@ -2,7 +2,8 @@ from numpy import pi
 from pymote import *
 from pymote.environment import Environment2D
 from pymote.algorithms.broadcast import Flood
-from pymote.algorithms.readsensors import ReadSensors
+from pymote.algorithms.niculescu2003.dvhop import DVHop
+from pymote.algorithms.santoro2007.traversal import DFT, DFStar
 
 def get_nodes(network):
     nodes = []
@@ -71,8 +72,12 @@ def generate_network(settings, nodes, edges, algorithmName):
     network = Network(environment=Environment2D(shape=(settings['width'], settings['height'])))
     if algorithmName == 'Flood':
         network.algorithms = ( (Flood, {'informationKey':'I'}), )
-    elif algorithmName == 'ReadSensors':
-        network.algorithms = ( (ReadSensors, {}), )
+    elif algorithmName == 'DVHop':
+        network.algorithms = ( (DVHop, {}), )
+    elif algorithmName == 'DFT':
+        network.algorithms = ( (DFT, {}), )
+    elif algorithmName == 'DFStar':
+        network.algorithms = ( (DFStar, {}), )
 
     for node in nodes:
         createdNode = network.add_node(pos=[node['x'], node['y']], ori=node['theta'], commRange=node['commRange'])
