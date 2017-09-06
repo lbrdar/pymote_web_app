@@ -19,9 +19,7 @@ class ResultsPage extends React.Component {
 
   onStepChange = (e, step) => this.setState({ step });
 
-  goBack = () => {
-    // TODO: go back to algorithm page
-  };
+  goBack = () => location.assign('/?loadOld=true');
 
   renderStatusColor = (status, statusColors) => (
     <div style={styles.color}>

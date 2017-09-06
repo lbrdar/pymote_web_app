@@ -27,6 +27,11 @@ class AlgorithmPage extends React.Component {
       showError: false,
       errorMsg: ''
     };
+
+    // if returning from results page, display state that was active before running the simulation
+    if (window.location.search && window.location.search.indexOf('loadOld=true') !== -1) {
+      this.state = JSON.parse(localStorage.getItem('NetworkSetup'));
+    }
   }
 
   setEdges = edges => this.setState({ edges });
@@ -48,6 +53,7 @@ class AlgorithmPage extends React.Component {
       });
       return;
     }
+    localStorage.setItem('NetworkSetup', JSON.stringify(this.state));
     this.form.submit();
   };
 
