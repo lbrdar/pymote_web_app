@@ -81,11 +81,26 @@ def generate_network(settings, nodes, edges, algorithmName):
             memory[k.encode('ascii', 'ignore')] = node['memory'][k].encode('ascii', 'ignore')
         createdNode.memory = memory
 
-    """
+        # if network needs to be built with given edges, update ids
+        if not settings['useCommRange']:
+            for edge in edges:
+                if edge[0]['id'] == node['id']:
+                    edge[0]['id'] = createdNode.id
+                elif edge[1]['id'] == node['id']:
+                    edge[1]['id'] = createdNode.id
+
+
     if not settings['useCommRange']:
         network.remove_edges_from(network.edges())
+        nodes = network.nodes()
         for edge in edges:
-            network.add_edge(edge[0], edge[1])
-    """
+            key0 = next(k0 for k0 in nodes if k0.__repr__() == "<Node id=%s>" % edge[0]['id'])
+            key1 = next(k1 for k1 in nodes if k1.__repr__() == "<Node id=%s>" % edge[1]['id'])
+            if not network.adj[key0]:
+                network.adj[key0] = {}
+            network.adj[key0][key1] = {}
+            if not network.adj[key1]:
+                network.adj[key1] = {}
+            network.adj[key1][key0] = {}
 
     return network
