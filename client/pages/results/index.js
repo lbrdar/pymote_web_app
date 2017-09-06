@@ -22,7 +22,7 @@ class ResultsPage extends React.Component {
   goBack = () => location.assign('/?loadOld=true');
 
   renderStatusColor = (status, statusColors) => (
-    <div style={styles.color}>
+    <div style={styles.color} key={status}>
       <div style={{ ...styles.colorValue, backgroundColor: statusColors[status] }} />
       <p style={styles.colorLabel}>{status || 'NO STATUS'}</p>
     </div>
@@ -33,7 +33,7 @@ class ResultsPage extends React.Component {
     if (index === 0) textAlign = 'left';
     if (index === this.props.results.length - 1) textAlign = 'right';
     return (
-      <div style={{ flex: 1, textAlign }}>
+      <div style={{ flex: 1, textAlign }} key={index}>
         {index}
       </div>
     );
