@@ -5,6 +5,7 @@ import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Network } from '../../common';
+import { stringToColor } from '../../utils';
 import styles from './style';
 
 class ResultsPage extends React.Component {
@@ -22,9 +23,23 @@ class ResultsPage extends React.Component {
     // TODO: go back to algorithm page
   };
 
+  renderStatusColor = (status, statusColors) => (
+    <div style={styles.color}>
+      <div style={{ ...styles.colorValue, backgroundColor: statusColors[status] }} />
+      <p style={styles.colorLabel}>{status || 'NO STATUS'}</p>
+    </div>
+  );
+
   render() {
     const { step } = this.state;
     const network = this.props.results[step];
+    const statusColors = {};
+    network.nodes.forEach((node) => {
+      if (statusColors[node.status] === undefined) {
+        statusColors[node.status] = stringToColor(node.status);
+      }
+    });
+
     return (
       <MuiThemeProvider>
         <div>
@@ -34,18 +49,26 @@ class ResultsPage extends React.Component {
             showMenuIconButton={false}
           />
           <div style={styles.content}>
+            <div style={styles.align}>
+              <div style={styles.colors}>
+                <div>Node status colors legend: </div>
+                {Object.keys(statusColors).map(status => this.renderStatusColor(status, statusColors))}
+              </div>
+              <Network
+                settings={network.settings}
+                edges={network.edges}
+                nodes={network.nodes}
+                configurable={false}
+                statusColors={statusColors}
+              />
+            </div>
+            <p style={styles.sliderLabel}>Displaying data for step number: {step}</p>
             <Slider
               min={0}
               max={this.props.results.length}
               step={1}
               value={step}
               onChange={this.onStepChange}
-            />
-            <Network
-              settings={network.settings}
-              edges={network.edges}
-              nodes={network.nodes}
-              configurable={false}
             />
           </div>
         </div>

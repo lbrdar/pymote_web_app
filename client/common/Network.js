@@ -155,22 +155,29 @@ class Network extends React.Component {
     this.closeModal();
   };
 
-  renderNode = (node, index) => (
-    <Circle
-      key={node.id}
-      id={node.id}
-      index={index}
-      x={node.x}
-      y={node.y}
-      radius={constants.NODE_SIZE}
-      fill={(this.state.selectedNode && this.state.selectedNode.id === node.id) ? 'red' : 'green'}
-      shadowBlur={10}
-      draggable={this.props.configurable}
-      onClick={this.onNodeClick}
-      onDblclick={this.onNodeDoubleClick}
-      onDragMove={this.onNodeDragMove}
-    />
-  );
+  renderNode = (node, index) => {
+    const { statusColors } = this.props;
+    const isSelected = (this.state.selectedNode && this.state.selectedNode.id === node.id);
+    let nodeColor = isSelected ? 'red' : 'green';
+    if (statusColors) nodeColor = statusColors[node.status];
+
+    return (
+      <Circle
+        key={node.id}
+        id={node.id}
+        index={index}
+        x={node.x}
+        y={node.y}
+        radius={constants.NODE_SIZE}
+        fill={nodeColor}
+        shadowBlur={10}
+        draggable={this.props.configurable}
+        onClick={this.onNodeClick}
+        onDblclick={this.onNodeDoubleClick}
+        onDragMove={this.onNodeDragMove}
+      />
+    );
+  };
 
   renderEdge = (edge, index) => {
     const { selectedEdge } = this.state;
@@ -193,7 +200,6 @@ class Network extends React.Component {
 
     return (
       <div style={{ ...styles.networkContainer, width: `${width + 2}px` }}>
-        <RaisedButton primary label="Network settings" onClick={this.onSettingsClick} />
         <Paper zDepth={2}>
           <Stage width={width} height={height} style={styles.canvas}>
             <Layer>
@@ -229,6 +235,7 @@ class Network extends React.Component {
             />
           }
         </Paper>
+        {configurable && <RaisedButton primary label="Network settings" onClick={this.onSettingsClick} />}
       </div>
     );
   }
@@ -247,7 +254,8 @@ Network.propTypes = {
   setNodes: PropTypes.func,
   setEdges: PropTypes.func,
   setSettings: PropTypes.func,
-  configurable: PropTypes.bool
+  configurable: PropTypes.bool,
+  statusColors: PropTypes.shape({})
 };
 
 Network.defaultProps = {
@@ -256,7 +264,8 @@ Network.defaultProps = {
   setNodes: () => {},
   setEdges: () => {},
   setSettings: () => {},
-  configurable: false
+  configurable: false,
+  statusColors: null
 };
 
 export default Network;
