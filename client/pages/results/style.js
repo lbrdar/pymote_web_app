@@ -25,6 +25,12 @@ const styles = {
   },
   sliderLabel: {
     fontSize: '18px'
+  },
+  slider: {
+    marginBottom: 0
+  },
+  sliderScaleContainer: {
+    display: 'flex'
   }
 };
 

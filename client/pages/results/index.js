@@ -28,6 +28,17 @@ class ResultsPage extends React.Component {
     </div>
   );
 
+  renderSliderScale = (res, index) => {
+    let textAlign = 'center';
+    if (index === 0) textAlign = 'left';
+    if (index === this.props.results.length - 1) textAlign = 'right';
+    return (
+      <div style={{ flex: 1, textAlign }}>
+        {index}
+      </div>
+    );
+  };
+
   render() {
     const { step } = this.state;
     const network = this.props.results[step];
@@ -62,12 +73,16 @@ class ResultsPage extends React.Component {
             </div>
             <p style={styles.sliderLabel}>Displaying data for step number: {step}</p>
             <Slider
+              sliderStyle={styles.slider}
               min={0}
-              max={this.props.results.length}
+              max={this.props.results.length - 1}
               step={1}
               value={step}
               onChange={this.onStepChange}
             />
+            <div style={styles.sliderScaleContainer}>
+              {this.props.results.map(this.renderSliderScale)}
+            </div>
           </div>
         </div>
       </MuiThemeProvider>
