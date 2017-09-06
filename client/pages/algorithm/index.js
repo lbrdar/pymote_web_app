@@ -109,11 +109,22 @@ AlgorithmPage.propTypes = {
     nodes: PropTypes.array,
     edges: PropTypes.array,
     settings: PropTypes.object
-  }).isRequired,
+  }),
   csrfmiddlewaretoken: PropTypes.string
 };
 
 AlgorithmPage.defaultProps = {
+  network: {
+    nodes: [],
+    edges: [],
+    settings: {
+      width: constants.NETWORK_WIDTH,
+      height: constants.NETWORK_HEIGHT,
+      defaultCommRange: constants.COMM_RANGE,
+      defaultTheta: constants.THETA,
+      useCommRange: constants.USE_COMM_RANGE
+    }
+  },
   csrfmiddlewaretoken: ''
 };
 

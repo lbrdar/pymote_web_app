@@ -11,7 +11,6 @@ import json
 class Algorithm(View):
     template = 'react_entrypoint.html'
     component = 'algorithm'
-    network = NetworkGenerator(4).generate_random_network()
 
     def get(self, request):
         # gets passed to react via window.props
@@ -26,7 +25,6 @@ class Algorithm(View):
                     'code': inspect.getsource(ReadSensors),
                 }
             ],
-            'network': get_network_dict(self.network),
             'csrfmiddlewaretoken': str(get_token(request))
         }
 
