@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import AppBar from 'material-ui/AppBar';
+import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Algorithm from './Algorithm';
@@ -23,6 +24,8 @@ class AlgorithmPage extends React.Component {
         defaultTheta: props.network.settings.defaultTheta || constants.THETA,
         useCommRange: props.network.settings.useCommRange === 'true'
       },
+      showError: false,
+      errorMsg: ''
     };
   }
 
@@ -34,7 +37,19 @@ class AlgorithmPage extends React.Component {
     this.setState({ settings });
   };
 
-  runSimulation = () => this.form.submit();
+  closeModal = () => this.setState({ showError: false });
+
+  runSimulation = () => {
+    const { algorithm, nodes } = this.state;
+    if (!nodes.length || algorithm === null) {
+      this.setState({
+        showError: true,
+        errorMsg: 'Before running simulation, you must add at least one node to the network and select at least one algorithm.'
+      });
+      return;
+    }
+    this.form.submit();
+  };
 
   recalculateEdges = () => {
     const { nodes } = this.state;
@@ -66,6 +81,14 @@ class AlgorithmPage extends React.Component {
   };
 
   render() {
+    const actions = [
+      <FlatButton
+        label="OK"
+        primary={true}
+        onClick={this.closeModal}
+      />
+    ];
+
     return (
       <MuiThemeProvider>
         <div>
@@ -94,6 +117,16 @@ class AlgorithmPage extends React.Component {
             <input type="hidden" name="csrfmiddlewaretoken" value={this.props.csrfmiddlewaretoken} />
             <input type="hidden" name="data" value={JSON.stringify(this.state)} />
           </form>
+          <Dialog
+            title="Can't run simulation"
+            actions={actions}
+            modal={false}
+            autoScrollBodyContent
+            open={this.state.showError}
+            onRequestClose={this.closeModal}
+          >
+            { this.state.errorMsg }
+          </Dialog>
         </div>
       </MuiThemeProvider>
     );
