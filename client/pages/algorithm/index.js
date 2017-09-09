@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Algorithm from './Algorithm';
 import { Network, constants } from '../../common';
+import config from '../../config';
 import styles from './style';
 
 
@@ -43,6 +44,17 @@ class AlgorithmPage extends React.Component {
   };
 
   closeModal = () => this.setState({ showError: false });
+
+  generateNetwork = (networkType, numOfNodes, settings) => {
+    let params = `networkType=${networkType}&&numOfNodes=${numOfNodes}`;
+    if (settings) {
+      params = `${params}&&settings=${JSON.stringify(settings)}`;
+    }
+
+    fetch(`${config.apiURL}/create_network/?${params}`)
+      .then(body => body.json())
+      .then(res => this.setState({ edges: res.edges, nodes: res.nodes }));
+  };
 
   runSimulation = () => {
     const { algorithm, nodes } = this.state;
@@ -112,6 +124,7 @@ class AlgorithmPage extends React.Component {
               setEdges={this.setEdges}
               setNodes={this.setNodes}
               configurable={true}
+              generateNetwork={this.generateNetwork}
             />
             <Algorithm
               algorithms={this.props.algorithms}

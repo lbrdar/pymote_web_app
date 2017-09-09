@@ -1,9 +1,11 @@
+from random import randint
 from numpy import pi
 from pymote import *
 from pymote.environment import Environment2D
 from pymote.algorithms.broadcast import Flood
 from pymote.algorithms.niculescu2003.dvhop import DVHop
 from pymote.algorithms.santoro2007.traversal import DFT, DFStar
+import networkx as nx
 
 def get_nodes(network):
     nodes = []
@@ -68,7 +70,7 @@ def get_network_dict(network):
         }
     }
 
-def generate_network(settings, nodes, edges, algorithmName):
+def generate_network(settings, nodes, edges, algorithmName = None):
     network = Network(environment=Environment2D(shape=(settings['width'], settings['height'])))
     if algorithmName == 'Flood':
         network.algorithms = ( (Flood, {'informationKey':'I'}), )
@@ -109,3 +111,11 @@ def generate_network(settings, nodes, edges, algorithmName):
             network.adj[key1][key0] = {}
 
     return network
+
+def generate_graph(structureName, numOfNodes):
+    if structureName == 'star':
+        return nx.star_graph(numOfNodes - 1)
+    elif structureName == 'complete':
+        return nx.complete_graph(numOfNodes)
+    else:
+        return nx.gnm_random_graph(numOfNodes, randint(0, numOfNodes))

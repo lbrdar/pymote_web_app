@@ -6,14 +6,20 @@ import RaisedButton from 'material-ui/RaisedButton';
 import EdgeDetails from './EdgeDetails';
 import NodeDetails from './NodeDetails';
 import NetworkDetails from './NetworkDetails';
+import GenerateNetwork from './GenerateNetwork';
 import constants from './constants';
 
 const styles = {
   networkContainer: {
-    margin: '0 auto'
+    margin: '0 auto',
+    position: 'relative'
   },
   canvas: {
     border: '1px solid black'
+  },
+  generateNetworkButton: {
+    position: 'absolute',
+    right: 0
   }
 };
 
@@ -26,11 +32,14 @@ class Network extends React.Component {
       selectedEdge: null,
       showNodeDetails: false,
       showEdgeDetails: false,
-      showSettings: false
+      showSettings: false,
+      showGenerateNetwork: false
     };
   }
 
   onSettingsClick = () => this.setState({ showSettings: true });
+
+  onGenerateNetworkClick = () => this.setState({ showGenerateNetwork: true });
 
   onStageClick = ({ evt }) => {
     this.setState({ selectedNode: null });
@@ -111,6 +120,7 @@ class Network extends React.Component {
     showSettings: false,
     showNodeDetails: false,
     showEdgeDetails: false,
+    showGenerateNetwork: false,
     selectedNode: null,
     selectedEdge: null
   });
@@ -195,7 +205,7 @@ class Network extends React.Component {
   };
 
   render() {
-    const { selectedNode, selectedEdge, showNodeDetails, showEdgeDetails, showSettings } = this.state;
+    const { selectedNode, selectedEdge, showNodeDetails, showEdgeDetails, showSettings, showGenerateNetwork } = this.state;
     const { settings: { width, height, useCommRange }, edges, nodes, configurable } = this.props;
 
     return (
@@ -234,8 +244,16 @@ class Network extends React.Component {
               updateNetwork={this.props.setSettings}
             />
           }
+          {showGenerateNetwork &&
+            <GenerateNetwork
+              settings={this.props.settings}
+              closeModal={this.closeModal}
+              generateNetwork={this.props.generateNetwork}
+            />
+          }
         </Paper>
-        {configurable && <RaisedButton primary label="Network settings" onClick={this.onSettingsClick} />}
+        {configurable && <RaisedButton secondary label="Network settings" onClick={this.onSettingsClick} />}
+        {configurable && <RaisedButton primary label="Generate network" onClick={this.onGenerateNetworkClick} />}
       </div>
     );
   }
@@ -254,6 +272,7 @@ Network.propTypes = {
   setNodes: PropTypes.func,
   setEdges: PropTypes.func,
   setSettings: PropTypes.func,
+  generateNetwork: PropTypes.func,
   configurable: PropTypes.bool,
   statusColors: PropTypes.shape({})
 };
@@ -264,6 +283,7 @@ Network.defaultProps = {
   setNodes: () => {},
   setEdges: () => {},
   setSettings: () => {},
+  generateNetwork: () => {},
   configurable: false,
   statusColors: null
 };
