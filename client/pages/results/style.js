@@ -5,8 +5,10 @@ const styles = {
   align: {
     display: 'flex'
   },
-  colors: {
-    fontSize: '18px'
+  colorsContainer: {
+    margin: '0 10px',
+    fontSize: '18px',
+    minWidth: '200px'
   },
   color: {
     marginTop: '5px'
@@ -23,7 +25,28 @@ const styles = {
     paddingTop: '20px',
     width: '20px'
   },
+  nodeInfoContainer: {
+    overflowY: 'auto',
+    maxHeight: '600px',
+    margin: '0 0 0 10px',
+    padding: '0 10px 10px',
+    flex: 2
+  },
+  textFieldLabel: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    color: 'black'
+  },
+  leftTextField: {
+    marginRight: '10px',
+    width: 'calc(50% - 10px)'
+  },
+  rightTextField: {
+    marginLeft: '10px',
+    width: 'calc(50% - 10px)'
+  },
   sliderLabel: {
+    marginTop: '10px',
     fontSize: '18px'
   },
   slider: {

@@ -5,19 +5,40 @@ import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import { Network } from '../../common';
+import NodeInfo from './NodeInfo';
 import { stringToColor } from '../../utils';
 import styles from './style';
 
 class ResultsPage extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      step: 0
+      step: 0,
+      statusColors: this.getStatusColors(props.results[0]),
+      selectedNode: null
     };
   }
 
-  onStepChange = (e, step) => this.setState({ step });
+  onStepChange = (e, step) => this.setState({
+    step,
+    statusColors: this.getStatusColors(this.props.results[step]),
+    selectedNode: this.state.selectedNode
+      ? this.props.results[step].nodes.find(node => node.id === this.state.selectedNode.id)
+      : null
+  });
+
+  setSelectedNode = selectedNode => this.setState({ selectedNode });
+
+  getStatusColors = (network) => {
+    const statusColors = {};
+    network.nodes.forEach((node) => {
+      if (statusColors[node.status] === undefined) {
+        statusColors[node.status] = stringToColor(node.status);
+      }
+    });
+    return statusColors;
+  };
 
   goBack = () => location.assign('/?loadOld=true');
 
@@ -40,14 +61,8 @@ class ResultsPage extends React.Component {
   };
 
   render() {
-    const { step } = this.state;
+    const { step, statusColors, selectedNode } = this.state;
     const network = this.props.results[step];
-    const statusColors = {};
-    network.nodes.forEach((node) => {
-      if (statusColors[node.status] === undefined) {
-        statusColors[node.status] = stringToColor(node.status);
-      }
-    });
 
     return (
       <MuiThemeProvider>
@@ -59,7 +74,7 @@ class ResultsPage extends React.Component {
           />
           <div style={styles.content}>
             <div style={styles.align}>
-              <div style={styles.colors}>
+              <div style={styles.colorsContainer}>
                 <div>Node status colors legend: </div>
                 {Object.keys(statusColors).map(status => this.renderStatusColor(status, statusColors))}
               </div>
@@ -67,11 +82,13 @@ class ResultsPage extends React.Component {
                 settings={network.settings}
                 edges={network.edges}
                 nodes={network.nodes}
+                setSelectedNode={this.setSelectedNode}
                 configurable={false}
                 statusColors={statusColors}
               />
+              {!!selectedNode && <NodeInfo node={selectedNode} />}
             </div>
-            <p style={styles.sliderLabel}>Displaying data for step number: {step}</p>
+            <p style={styles.sliderLabel}>Displaying data for step: {step}</p>
             <Slider
               sliderStyle={styles.slider}
               min={0}

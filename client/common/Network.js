@@ -55,7 +55,7 @@ class Network extends React.Component {
 
   onNodeClick = ({ target }) => {
     const { selectedNode } = this.state;
-    const { edges, nodes, settings, configurable, setEdges } = this.props;
+    const { edges, nodes, settings, configurable, setEdges, setSelectedNode } = this.props;
     const allowChange = configurable && !settings.useCommRange;
     const clickedNode = nodes.filter(node => (node.id === target.attrs.id))[0];
 
@@ -73,9 +73,11 @@ class Network extends React.Component {
         }
       ]);
       this.setState({ selectedNode: null });
+      setSelectedNode(null);
       setEdges(edges);
     } else {
       this.setState({ selectedNode: clickedNode });
+      setSelectedNode(clickedNode);
     }
   };
   onNodeDoubleClick = () => this.openModal('Node');
@@ -115,6 +117,7 @@ class Network extends React.Component {
     }
 
     this.setState({ selectedNode });
+    this.props.setSelectedNode(selectedNode);
     this.props.setNodes(nodes);
   };
 
@@ -202,7 +205,7 @@ class Network extends React.Component {
     const { statusColors } = this.props;
     const isSelected = (this.state.selectedNode && this.state.selectedNode.id === node.id);
     let nodeColor = isSelected ? 'red' : 'green';
-    if (statusColors) nodeColor = statusColors[node.status];
+    if (statusColors && !isSelected) nodeColor = statusColors[node.status];
 
     return (
       <Circle
@@ -313,6 +316,7 @@ Network.propTypes = {
   setNodes: PropTypes.func,
   setEdges: PropTypes.func,
   setSettings: PropTypes.func,
+  setSelectedNode: PropTypes.func,
   generateNetwork: PropTypes.func,
   configurable: PropTypes.bool,
   statusColors: PropTypes.shape({})
@@ -324,6 +328,7 @@ Network.defaultProps = {
   setNodes: () => {},
   setEdges: () => {},
   setSettings: () => {},
+  setSelectedNode: () => {},
   generateNetwork: () => {},
   configurable: false,
   statusColors: null
