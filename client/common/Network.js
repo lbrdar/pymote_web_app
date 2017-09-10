@@ -287,7 +287,14 @@ class Network extends React.Component {
           }
         </Paper>
         {configurable && <RaisedButton secondary label="Network settings" onClick={this.onSettingsClick} />}
-        {configurable && <RaisedButton primary label="Generate network" onClick={this.onGenerateNetworkClick} />}
+        {configurable &&
+          <RaisedButton
+            primary
+            label="Generate network"
+            style={styles.generateNetworkButton}
+            onClick={this.onGenerateNetworkClick}
+          />
+        }
       </div>
     );
   }
