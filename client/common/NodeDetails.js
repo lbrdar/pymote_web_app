@@ -220,7 +220,7 @@ class NodeDetails extends React.Component {
           floatingLabelStyle={styles.textLabel}
           multiLine
           rows={5}
-          value={inbox}
+          value={inbox.join()}
         />
         <TextField
           disabled
@@ -229,7 +229,7 @@ class NodeDetails extends React.Component {
           floatingLabelStyle={styles.textLabel}
           multiLine
           rows={5}
-          value={outbox}
+          value={outbox.join()}
         />
       </Dialog>
     );
