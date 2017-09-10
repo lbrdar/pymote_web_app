@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "babel-core": "^6.26.0",
+    "file-loader": "^0.11.2",
     "isomorphic-fetch": "^2.2.1",
     "konva": "^1.6.7",
     "lodash": "^4.5.1",
@@ -36,6 +37,7 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-konva": "^1.1.4",
+    "url-loader": "^0.5.9",
     "webpack": "^1.12.13",
     "webpack-dev-server": "^1.14.1"
   }

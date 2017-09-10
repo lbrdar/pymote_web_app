@@ -1,13 +1,16 @@
 /* eslint-disable no-param-reassign */
 import React, { PropTypes } from 'react';
-import { Stage, Layer, Circle, Line, Rect } from 'react-konva';
+import { Stage, Layer, Circle, Line, Rect, Group } from 'react-konva';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import EdgeDetails from './EdgeDetails';
 import NodeDetails from './NodeDetails';
 import NetworkDetails from './NetworkDetails';
 import GenerateNetwork from './GenerateNetwork';
+import ImageWrapper from './ImageWrapper';
 import constants from './constants';
+import inbox from '../assets/inbox.jpg';
+import outbox from '../assets/outbox.jpg';
 
 const styles = {
   networkContainer: {
@@ -165,6 +168,36 @@ class Network extends React.Component {
     this.closeModal();
   };
 
+  renderMsgIcons = (node, index) => {
+    const hasInbox = !!node.inbox.length;
+    const hasOutbox = !!node.outbox.length;
+
+    if (!hasInbox && !hasOutbox) return null;
+
+    return (
+      <Group key={index}>
+        {hasInbox &&
+          <ImageWrapper
+            image={inbox}
+            width={constants.BOX_IMG_SIZE}
+            height={constants.BOX_IMG_SIZE}
+            x={node.x}
+            y={node.y + (constants.NODE_SIZE / 4)}
+          />
+        }
+        {hasOutbox &&
+          <ImageWrapper
+            image={outbox}
+            width={constants.BOX_IMG_SIZE}
+            height={constants.BOX_IMG_SIZE}
+            x={node.x - constants.BOX_IMG_SIZE}
+            y={node.y + (constants.NODE_SIZE / 4)}
+          />
+        }
+      </Group>
+    );
+  };
+
   renderNode = (node, index) => {
     const { statusColors } = this.props;
     const isSelected = (this.state.selectedNode && this.state.selectedNode.id === node.id);
@@ -216,6 +249,7 @@ class Network extends React.Component {
               <Rect x={0} y={0} width={width} height={height} onClick={this.onStageClick} />
               { edges.map(this.renderEdge) }
               { nodes.map(this.renderNode) }
+              { nodes.map(this.renderMsgIcons) }
             </Layer>
           </Stage>
           {showNodeDetails &&

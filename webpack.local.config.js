@@ -51,4 +51,10 @@ config.module.loaders.push(
   }
 );
 
+// Add a loader for static files (images, fonts, docs)
+config.module.loaders.push({
+  test: /\.(png|jpg|jpeg|gif|svg|ttf|woff|woff2|pdf)$/,
+  loader: 'url-loader?limit=10000&name=assets/[hash].[ext]'
+});
+
 module.exports = config;

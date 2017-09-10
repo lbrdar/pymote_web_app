@@ -1,4 +1,5 @@
 export default {
+  BOX_IMG_SIZE: 20,
   NODE_SIZE: 10,
   NETWORK_WIDTH: 600,
   NETWORK_HEIGHT: 600,
