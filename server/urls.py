@@ -15,12 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from django.contrib import admin
-from django.views import generic
 from views import Algorithm, Results, CreateNetwork
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
     url(r'^$', Algorithm.as_view(), name='algorithm'),
     url(r'^results/', Results.as_view(), name='results'),
     url(r'^api/create_network/', CreateNetwork.as_view(), name='createNetwork'),

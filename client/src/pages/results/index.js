@@ -1,12 +1,13 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import Slider from 'material-ui/Slider';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { Network } from '../../common';
+import { Network } from '../../common/index';
 import NodeInfo from './NodeInfo';
-import { stringToColor } from '../../utils';
+import { stringToColor } from '../../utils/index';
 import styles from './style';
 
 class ResultsPage extends React.Component {
@@ -40,7 +41,8 @@ class ResultsPage extends React.Component {
     return statusColors;
   };
 
-  goBack = () => location.assign('/?loadOld=true');
+  // goBack = () => location.assign('/?loadOld=true');
+  goBack = () => null;
 
   renderStatusColor = (status, statusColors) => (
     <div style={styles.color} key={status}>

@@ -1,12 +1,13 @@
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import AppBar from 'material-ui/AppBar';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Algorithm from './Algorithm';
-import { Network, constants } from '../../common';
-import config from '../../config';
+import { Network, constants } from '../../common/index';
+import config from '../../config/index';
 import styles from './style';
 
 

@@ -6,7 +6,7 @@ from django.middleware.csrf import get_token
 from pymote import *
 from pymote.algorithms.broadcast import Flood
 from pymote.algorithms.niculescu2003.dvhop import DVHop
-from pymote.algorithms.santoro2007.traversal import DFT, DFStar
+# from pymote.algorithms.santoro2007.traversal import DFT, DFStar
 from utils import get_network_dict, generate_network, generate_graph
 import networkx as nx
 import inspect
@@ -27,15 +27,15 @@ class Algorithm(View):
                 {
                     'label': 'DVHop',
                     'code': inspect.getsource(DVHop),
-                },
-                {
-                    'label': 'DFT',
-                    'code': inspect.getsource(DFT),
-                },
-                {
-                    'label': 'DFStar',
-                    'code': inspect.getsource(DFStar),
                 }
+                # {
+                #     'label': 'DFT',
+                #     'code': inspect.getsource(DFT),
+                # },
+                # {
+                #     'label': 'DFStar',
+                #     'code': inspect.getsource(DFStar),
+                # }
             ],
             'csrfmiddlewaretoken': str(get_token(request))
         }
@@ -125,4 +125,5 @@ class CreateNetwork(View):
                 }
             ])
         network = generate_network(settings, nodes, edges)
+        print(get_network_dict(network))
         return JsonResponse(get_network_dict(network))

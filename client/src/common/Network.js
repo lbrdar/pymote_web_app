@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React, { PropTypes } from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import { Stage, Layer, Circle, Line, Rect, Group } from 'react-konva';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
