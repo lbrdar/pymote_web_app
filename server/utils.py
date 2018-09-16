@@ -67,15 +67,16 @@ def get_network_dict(network):
         }
     }
 
-def generate_network(settings, nodes, edges, algorithm):
+def generate_network(settings, nodes, edges, algorithm = None):
     network = Network(environment=Environment2D(shape=(settings['width'], settings['height'])))
 
-    algorithm = "{}{}{}".format('"""', algorithm, '"""')
-    algorithm = compile(algorithm, 'algorithm_code', 'exec')
-    ctx = { 'network': network }
-    exec algorithm in ctx
-    exec ctx['__doc__'] in ctx
-    network = ctx['network']
+    if algorithm != None:
+        algorithm = "{}{}{}".format('"""', algorithm, '"""')
+        algorithm = compile(algorithm, 'algorithm_code', 'exec')
+        ctx = { 'network': network }
+        exec algorithm in ctx
+        exec ctx['__doc__'] in ctx
+        network = ctx['network']
 
 
     for node in nodes:
