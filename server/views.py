@@ -53,44 +53,18 @@ class Algorithm(View):
 
 
 class Results(View):
-    template = 'react_entrypoint.html'
-    component = 'results'
+    def post(self, request):
+        data = json.loads(request.POST['data'])
+        network = generate_network(data['settings'], data['nodes'], data['edges'], data['algorithm'])
+        simulation = Simulation(network)
 
-    @method_decorator(csrf_exempt)
-    def get(self, request):
-            data = json.loads(request.GET.get('network', {}))
-            network = generate_network(data['settings'], data['nodes'], data['edges'], data['algorithm']['label'])
-            simulation = Simulation(network)
-
-            results = [get_network_dict(network)]
+        results = [get_network_dict(network)]
+        if len(network.algorithms) > 0:
             while (network.algorithmState['finished'] == False):
                 simulation.run_step()
                 results.append(get_network_dict(network))
 
-            return JsonResponse(results, safe=False)
-
-    def post(self, request):
-        data = json.loads(request.POST['data'])
-        network = generate_network(data['settings'], data['nodes'], data['edges'], data['algorithm']['label'])
-        simulation = Simulation(network)
-
-        results = [get_network_dict(network)]
-        while (network.algorithmState['finished'] == False):
-            simulation.run_step()
-            results.append(get_network_dict(network))
-
-
-        props = {
-            'results': results,
-            'csrfmiddlewaretoken': str(get_token(request))
-        }
-
-        context = {
-            'component': self.component,
-            'props': props,
-        }
-
-        return render(request, self.template, context)
+        return JsonResponse(results, safe=False);
 
 class CreateNetwork(View):
     def get(self, request):
