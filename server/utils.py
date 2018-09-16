@@ -31,8 +31,8 @@ def get_nodes(network):
 
         node = {
             'id': n.id,
-            'x': network.pos[n][0],
-            'y': network.pos[n][1],
+            'x': int(network.pos[n][0]),
+            'y': int(network.pos[n][1]),
             'theta': network.ori[n] * 180. / pi,
             'commRange': n.commRange,
             'status': n.status,
@@ -50,12 +50,12 @@ def get_edges(network):
         n1 = e[1];
         edge = [{
             'id': n0.id,
-            'x': network.pos[n0][0],
-            'y': network.pos[n0][1],
+            'x': int(network.pos[n0][0]),
+            'y': int(network.pos[n0][1]),
         }, {
             'id': n1.id,
-            'x': network.pos[n1][0],
-            'y': network.pos[n1][1],
+            'x': int(network.pos[n1][0]),
+            'y': int(network.pos[n1][1]),
         }]
         edges.append(edge)
     return edges
